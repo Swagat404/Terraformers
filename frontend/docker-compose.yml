@@ -1,0 +1,11 @@
+services:
+  webgl-server:
+    image: nginx:alpine
+    volumes:
+      - ./unity:/usr/share/nginx/html
+    ports:
+      - "8080:80"
+
+
+
+
