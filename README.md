@@ -103,6 +103,12 @@ Ensure you have the following installed:
 - Git
 - Docker
 
+### Cloning the Repository & Initial Setup
+```bash
+git clone https://github.com/Swagat404/Terraformers.git
+cd Terraformers
+```
+
 ### Docker Setup
 Refer to [backend_docker_guide](docs/backend_docker_guide.md) and [frontend_docker_guide](docs/frontend_docker_guide.md) for detailed Docker-related steps.
 
