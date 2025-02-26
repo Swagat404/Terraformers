@@ -1,0 +1,6 @@
+numpy
+pandas
+psycopg2-binary
+matplotlib
+supabase>=0.7.1
+python-dotenv

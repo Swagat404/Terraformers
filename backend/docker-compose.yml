@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  # Java Service
+  java:
+    build:
+      context: .
+      dockerfile: docker/java.Dockerfile
+    container_name: terraformers-java
+    volumes:
+      - ./java:/app/java
+    env_file:
+      - .env
+    networks:
+      - terraformers-network
+
+  # Python Service
+  python:
+    build:
+      context: .
+      dockerfile: docker/python.Dockerfile
+    container_name: terraformers-python
+    volumes:
+      - ./python:/app/python
+    env_file:
+      - .env
+    networks:
+      - terraformers-network
+
+  # C# Service
+  csharp:
+    build:
+      context: .
+      dockerfile: docker/csharp.Dockerfile
+    container_name: terraformers-csharp
+    volumes:
+      - ./csharp:/app/csharp
+    env_file:
+      - .env
+    networks:
+      - terraformers-network
+
+networks:
+  terraformers-network:
+    driver: bridge
+
