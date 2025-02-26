@@ -52,8 +52,7 @@ mars-ai-simulator/
 │   └── web/
 ├── docs/                                           # Project documentation and design specs
 │   └── backend_docker_guide.md
-├── data/                                           # Mars terrain data, avatar models, and related assets
-│   ├── avatars/
+├── data/                                           # Mars terrain data, avatar models, and related asset
 │   ├── missions/
 │   └── terrain/
 ├── scripts/                                        # Utility scripts (build, deployment, etc.)
