@@ -1,0 +1,47 @@
+package com.terraformers.avatars;
+
+public class AvatarController {
+    private AvatarModel avatar;
+    private AIController aiBrain;
+
+    public AvatarController(AvatarModel avatar) {
+        this.avatar = avatar;
+    }
+
+    /**
+     * Assigns a new AI brain to control the avatar.
+     */
+    public void setAIBrain(AIController ai) {
+        this.aiBrain = ai;
+    }
+
+    /**
+     * Moves the avatar based on the AI brain's decision.
+     */
+    public void moveAutomatically() {
+        if (aiBrain == null) {
+            System.out.println("No AI brain assigned.");
+            return;
+        }
+
+        double[] nextMove = aiBrain.decideNextMove(avatar.getX(), avatar.getY(), avatar.getZ());
+        boolean moved = avatar.move(nextMove[0], nextMove[1], nextMove[2]);
+
+        if (moved) {
+            System.out.println("AI moved avatar to: (" + nextMove[0] + ", " + nextMove[1] + ", " + nextMove[2] + ")");
+        } else {
+            System.out.println("AI movement failed (Battery low).");
+        }
+    }
+
+    public void recharge() {
+        avatar.rechargeBattery();
+        System.out.println("Battery recharged!");
+    }
+
+    public void printAvatarStatus() {
+        System.out.println("Avatar Position: (" + avatar.getX() + ", " + avatar.getY() + ", " + avatar.getZ() + ")");
+        System.out.println("Battery Level: " + avatar.getBatteryLevel());
+    }
+}
+
