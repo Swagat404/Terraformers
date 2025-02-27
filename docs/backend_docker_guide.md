@@ -11,6 +11,7 @@ This guide provides step-by-step instructions for setting up and working with th
 Before running the application, you need to build the Docker containers. Navigate to the backend directory and execute:
 ```sh
 docker-compose build
+docker-compose up -d   
 ```
 This ensures all dependencies are installed and the latest code changes are reflected in the containerized environment.
 

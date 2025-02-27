@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.8'  # Remove this line if you want to avoid the obsolete version warning
 services:
   # Java Service
   java:
@@ -6,12 +6,15 @@ services:
       context: .
       dockerfile: docker/java.Dockerfile
     container_name: terraformers-java
+    command: tail -f /dev/null  # Keep container alive
     volumes:
       - ./java:/app/java
     env_file:
       - .env
     networks:
       - terraformers-network
+    ports:
+      - "8080:8080"  # Example port for Java app
 
   # Python Service
   python:
@@ -19,12 +22,15 @@ services:
       context: .
       dockerfile: docker/python.Dockerfile
     container_name: terraformers-python
+    command: tail -f /dev/null  # Keep container alive
     volumes:
       - ./python:/app/python
     env_file:
       - .env
     networks:
       - terraformers-network
+    ports:
+      - "5002:5002"  # Example port for Python Flask/Django
 
   # C# Service
   csharp:
@@ -32,12 +38,15 @@ services:
       context: .
       dockerfile: docker/csharp.Dockerfile
     container_name: terraformers-csharp
+    command: tail -f /dev/null  # Keep container alive
     volumes:
       - ./csharp:/app/csharp
     env_file:
       - .env
     networks:
       - terraformers-network
+    ports:
+      - "5001:5001"  # Example port for .NET Core
 
 networks:
   terraformers-network:
