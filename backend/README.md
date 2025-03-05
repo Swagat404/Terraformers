@@ -41,6 +41,7 @@ The python/db_manager.py module includes functions to insert mission data, log e
          docker exec -i mars_db psql -U mars_user -d mars_db < database/schema.sql
          
 3.Using the Python Module:
+    
     Enter the Python container:
     
          docker exec -it terraformers-python bash
