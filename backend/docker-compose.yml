@@ -1,4 +1,3 @@
-version: '3.8'  # Remove this line if you want to avoid the obsolete version warning
 services:
   # Java Service
   java:
@@ -30,7 +29,7 @@ services:
     networks:
       - terraformers-network
     ports:
-      - "5002:5002"  # Example port for Python Flask/Django
+      - "5002:5002"  # Example port for Python app
 
   # C# Service
   csharp:
@@ -48,7 +47,24 @@ services:
     ports:
       - "5001:5001"  # Example port for .NET Core
 
+  # PostgreSQL Database Service
+  db:
+    image: postgres:14
+    container_name: mars_db
+    environment:
+      - POSTGRES_DB=mars_db
+      - POSTGRES_USER=mars_user
+      - POSTGRES_PASSWORD=supersecurepassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - terraformers-network
+
 networks:
   terraformers-network:
     driver: bridge
 
+volumes:
+  db_data:
