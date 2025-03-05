@@ -1,4 +1,4 @@
-# Permanent Storage Component – Mars AI Simulator
+# Permanent Storage Component 
 
 I had already started with a local Docker Compose setup using PostgreSQL and built a Python module to manage our database operations
 creating tables for missions, logs, and results, plus functions to insert data and export logs to CSV. I'm open to testing out 
@@ -44,11 +44,18 @@ The python/db_manager.py module includes functions to insert mission data, log e
          cd /app/python
          python3
     In the Python interpreter, run:
+    
          from db_manager import insert_mission, insert_log, export_logs_to_csv
+
+         
          mission_id = insert_mission("Test Mission", "Collect samples on Mars")
+         
          insert_log(mission_id, "Mission started successfully.")
+         
          insert_log(mission_id, "Avatar initiated movement.")
+         
          export_logs_to_csv(mission_id, "test_mission_logs.csv")
+         
          Exit the interpreter (exit() or Ctrl+D) and then exit the container shell.
 
 — Arok
