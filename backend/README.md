@@ -32,22 +32,28 @@ The python/db_manager.py module includes functions to insert mission data, log e
 ## How to Use
 1.Start the Environment:
    In the backend directory, run:
+   
          docker compose up -d
 
 2.Apply the Schema:
     From the backend folder, run:
+    
          docker exec -i mars_db psql -U mars_user -d mars_db < database/schema.sql
+         
 3.Using the Python Module:
     Enter the Python container:
+    
          docker exec -it terraformers-python bash
+         
     Navigate to /app/python and start Python
+    
          cd /app/python
          python3
+         
     In the Python interpreter, run:
     
          from db_manager import insert_mission, insert_log, export_logs_to_csv
 
-         
          mission_id = insert_mission("Test Mission", "Collect samples on Mars")
          
          insert_log(mission_id, "Mission started successfully.")
