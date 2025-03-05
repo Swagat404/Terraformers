@@ -126,7 +126,7 @@ If your project requires additional libraries, languages, or tools, you can cust
 - **Team Member 4** - SWAGAT BHOWMIK 
 - **Team Member 5** - ARVAND KIANIMOGHADAM
 - **Team Member 6** - NEELAB WAFASHAREFE
-- **Team Member 3**
+- **Team Member 3** - MIKE ZHANG
 
   
 
