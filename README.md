@@ -120,7 +120,8 @@ If your project requires additional libraries, languages, or tools, you can cust
 - Maintain documentation in the `docs/` folder.
 
 ## Team Members
-- **Team Member 1** - 
+- **Team Member 1** - AROK KHOT BUL
 - **Team Member 2** - 
-- **Team Member 3** - 
+- **Team Member 3** -
+  
 
