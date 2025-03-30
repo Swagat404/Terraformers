@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1953259897 &8574412962073106934
+TerrainLayer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Ground 2
+  m_DiffuseTexture: {fileID: 2800000, guid: cc83a9582cc7b42dbae09f87a0390d23, type: 3}
+  m_NormalMapTexture: {fileID: 2800000, guid: 647891a995869423f94917c42108192e, type: 3}
+  m_MaskMapTexture: {fileID: 0}
+  m_TileSize: {x: 80000, y: 80000}
+  m_TileOffset: {x: 80000, y: 80000}
+  m_Specular: {r: 0.66615605, g: 0.764151, b: 0.65241194, a: 0}
+  m_Metallic: 0.64
+  m_Smoothness: 0.009
+  m_NormalScale: 1
+  m_DiffuseRemapMin: {x: 0, y: 0, z: 0, w: 0}
+  m_DiffuseRemapMax: {x: 1, y: 1, z: 1, w: 1}
+  m_MaskMapRemapMin: {x: 0, y: 0, z: 0, w: 0}
+  m_MaskMapRemapMax: {x: 1, y: 1, z: 1, w: 1}
+  m_SmoothnessSource: 1
