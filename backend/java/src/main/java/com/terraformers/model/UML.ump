@@ -1,0 +1,199 @@
+// Enumerations
+enum TerrainType {
+  Hilly,
+  Flat,
+  Rocky
+}
+
+enum MissionStatus {
+  Planned,
+  Ongoing,
+  Failed,
+  Completed,
+  Aborted
+}
+
+enum AvatarColor {
+  Red,
+  Blue,
+  Green,
+  Yellow
+}
+
+enum LogType {
+  Info,
+  Warning,
+  Error
+}
+
+enum AvatarBrainType {
+  TypeA,
+  TypeB
+}
+
+enum MotorPosition {
+  Front,
+  Back,
+  Left,
+  Right
+}
+
+enum MotorStatus {
+  Active,
+  Inactive,
+  Faulty
+}
+
+enum MotorType {
+  TypeX,
+  TypeY
+}
+
+enum SensorMountPosition {
+  Front,
+  Back,
+  Left,
+  Right
+}
+
+enum SensorStatus {
+  Active,
+  Inactive,
+  Faulty
+}
+
+enum SensorType {
+  Type1,
+  Type2
+}
+
+// Classes
+
+class Terrain {
+  Integer terrainID;
+  TerrainType terrainType;
+  Float surfaceHardness;
+  String description;
+  
+  // Association: One Terrain is linked with many Locations.
+  1 -- 1..* Location locations;
+}
+
+class Location {
+  Integer locationID;
+  Float longitude;
+  Float latitude;
+  Float altitude;
+  Float slope;
+  
+  // Association: Each Location must be linked to exactly one Terrain.
+  }
+
+class Mission {
+  Integer missionID;
+  String missionName;
+  MissionStatus status;
+  String objective;
+  
+  // Association: One Mission has many MissionLogs.
+  1 -- * MissionLog missionLogs;
+  1 -- * Avatar;
+}
+
+class MissionLog {
+    isA Log;
+// Association: Each MissionLog belongs to one Mission.
+  }
+
+class Avatar {
+  Integer avatarID;
+  String avatarName;
+  AvatarColor avatarColor;
+  
+  // Association: Optionally, an Avatar may be linked to one Location.
+  0..1 -- 1 Location ;
+  
+  // Association: One Avatar has many AvatarLogs.
+  1 -- * AvatarLog avatarLogs;
+  
+  // Association: One Avatar has many Sensors.
+  1 -- * Sensor sensors;
+  
+  // Association: Optionally, an Avatar has one AvatarBrain.
+  0..1 -- 1 AvatarBrain ;
+}
+
+class AvatarLog {
+    isA Log;
+// Association: Each AvatarLog belongs to one Avatar.
+  }
+
+class AvatarBrain {
+  Integer avatarBrainID;
+  AvatarBrainType avatarBrainType;
+  Integer avatarSpeed;
+  Integer avatarMaxJumpHeight;
+  Float avatarLength;
+  Float avatarWidth;
+  Float avatarHeight;
+  
+  // Association: One AvatarBrain controls many Motors.
+  1 -- * Motor motors;
+}
+
+class Motor {
+  Integer motorID;
+  Float maxSpeed;
+  Float powerConsumption;
+  MotorPosition position;
+  MotorStatus status;
+  MotorType motorType;
+  
+  // Association: Each Motor belongs to one AvatarBrain.
+  // Association: One Motor has many MotorReadings.
+  1 -- * MotorReading motorReadings;
+}
+
+class Sensor {
+  Integer sensorID;
+  SensorMountPosition mountPosition;
+  SensorStatus status;
+  SensorType sensorType;
+  
+  // Association: Each Sensor belongs to one Avatar.
+  // Association: One Sensor has many SensorReadings.
+  1 -- * SensorReading sensorReadings;
+}
+
+class SensorReading {
+    isA Reading;
+Integer readingID;
+  Float value;
+  
+  // Association: Each SensorReading belongs to one Sensor.
+  }
+
+class MotorReading {
+    isA Reading;
+Integer readingID;
+  Float currentSpeed;
+  String direction;
+  Float currentPower;
+  
+  // Association: Each MotorReading belongs to one Motor.
+  }
+class Log
+{
+  Integer logID;
+  Date logDate;
+  Time logTime;
+  LogType logType;
+  logMessage;
+}
+
+class Reading
+{
+  Integer readingID;
+  DateTime timeStamp;
+}
+

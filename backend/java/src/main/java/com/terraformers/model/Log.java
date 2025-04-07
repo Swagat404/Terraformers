@@ -1,128 +1,129 @@
 package com.terraformers.model;
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
 
-
-import java.sql.Date;
+// Import JPA and other necessary classes
+import java.sql.Date; // Core JPA annotations
 import java.sql.Time;
+import java.util.Objects;
+
+import javax.persistence.Column; // For Objects.hash/equals
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
 // line 186 "model.ump"
 // line 272 "model.ump"
-public class Log
-{
 
-  //------------------------
-  // ENUMERATIONS
-  //------------------------
+@MappedSuperclass // Declares this as a base class whose state is mapped to inheriting entities' tables
+public abstract class Log { // Making it abstract is good practice for MappedSuperclass
 
-  public enum LogType { Info, Warning, Error }
+    //------------------------
+    // ENUMERATIONS
+    //------------------------
 
-  //------------------------
-  // MEMBER VARIABLES
-  //------------------------
+    public enum LogType { Info, Warning, Error }
 
-  //Log Attributes
-  private int logID;
-  private Date logDate;
-  private Time logTime;
-  private LogType logType;
-  private String logMessage;
+    //------------------------
+    // MEMBER VARIABLES
+    //------------------------
+    // These fields will be included in the tables for AvatarLog and MissionLog
 
-  //------------------------
-  // CONSTRUCTOR
-  //------------------------
+    @Id // Primary key for log entries (inherited by subclasses)
+    // Assuming manual ID setting for now based on original constructor
+    // @GeneratedValue(strategy = GenerationType.IDENTITY) // Use if DB generates IDs for log tables
+    @Column(name = "log_id", nullable = false)
+    private int logID;
 
-  public Log(int aLogID, Date aLogDate, Time aLogTime, LogType aLogType, String aLogMessage)
-  {
-    logID = aLogID;
-    logDate = aLogDate;
-    logTime = aLogTime;
-    logType = aLogType;
-    logMessage = aLogMessage;
-  }
+    @Column(name = "log_date") // Maps to SQL DATE type
+    private Date logDate;
 
-  //------------------------
-  // INTERFACE
-  //------------------------
+    @Column(name = "log_time") // Maps to SQL TIME type
+    private Time logTime;
 
-  public boolean setLogID(int aLogID)
-  {
-    boolean wasSet = false;
-    logID = aLogID;
-    wasSet = true;
-    return wasSet;
-  }
+    @Enumerated(EnumType.STRING) // Store enum name as string
+    @Column(name = "log_type", length = 20)
+    private LogType logType;
 
-  public boolean setLogDate(Date aLogDate)
-  {
-    boolean wasSet = false;
-    logDate = aLogDate;
-    wasSet = true;
-    return wasSet;
-  }
+    @Column(name = "log_message", length = 1000) // Example length, adjust as needed
+    // @Lob // Uncomment if messages can exceed standard VARCHAR limits
+    private String logMessage;
 
-  public boolean setLogTime(Time aLogTime)
-  {
-    boolean wasSet = false;
-    logTime = aLogTime;
-    wasSet = true;
-    return wasSet;
-  }
+    //------------------------
+    // CONSTRUCTOR
+    //------------------------
 
-  public boolean setLogType(LogType aLogType)
-  {
-    boolean wasSet = false;
-    logType = aLogType;
-    wasSet = true;
-    return wasSet;
-  }
+    // Protected no-arg constructor REQUIRED for JPA and subclasses
+    protected Log() {}
 
-  public boolean setLogMessage(String aLogMessage)
-  {
-    boolean wasSet = false;
-    logMessage = aLogMessage;
-    wasSet = true;
-    return wasSet;
-  }
+    // Constructor for subclasses to call via super()
+    public Log(int aLogID, Date aLogDate, Time aLogTime, LogType aLogType, String aLogMessage) {
+        this.logID = aLogID;
+        this.logDate = aLogDate;
+        this.logTime = aLogTime;
+        this.logType = aLogType;
+        this.logMessage = aLogMessage;
+    }
 
-  public int getLogID()
-  {
-    return logID;
-  }
+    //------------------------
+    // INTERFACE (Getters/Setters)
+    //------------------------
+    // Keep standard getters and setters
 
-  public Date getLogDate()
-  {
-    return logDate;
-  }
+    public boolean setLogID(int aLogID) { this.logID = aLogID; return true; }
+    public int getLogID() { return logID; }
 
-  public Time getLogTime()
-  {
-    return logTime;
-  }
+    public boolean setLogDate(Date aLogDate) { this.logDate = aLogDate; return true; }
+    public Date getLogDate() { return logDate; }
 
-  public LogType getLogType()
-  {
-    return logType;
-  }
+    public boolean setLogTime(Time aLogTime) { this.logTime = aLogTime; return true; }
+    public Time getLogTime() { return logTime; }
 
-  public String getLogMessage()
-  {
-    return logMessage;
-  }
+    public boolean setLogType(LogType aLogType) { this.logType = aLogType; return true; }
+    public LogType getLogType() { return logType; }
 
-  public void delete()
-  {}
+    public boolean setLogMessage(String aLogMessage) { this.logMessage = aLogMessage; return true; }
+    public String getLogMessage() { return logMessage; }
 
+    // delete() method in MappedSuperclass usually does nothing specific to persistence
+    // Subclasses handle relationship cleanup before calling repository.delete()
+    public void delete() {}
 
-  public String toString()
-  {
-    return super.toString() + "["+
-            "logID" + ":" + getLogID()+ "," +
-            "logMessage" + ":" + getLogMessage()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "logDate" + "=" + (getLogDate() != null ? !getLogDate().equals(this)  ? getLogDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "logTime" + "=" + (getLogTime() != null ? !getLogTime().equals(this)  ? getLogTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "logType" + "=" + (getLogType() != null ? !getLogType().equals(this)  ? getLogType().toString().replaceAll("  ","    ") : "this" : "null");
-  }
+    // --- equals() and hashCode() ---
+    // Base implementation needed for subclasses
+    // Note: Includes getClass() check for correct comparison between different log types
+     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        // Must be exact same class (e.g., AvatarLog==AvatarLog, not AvatarLog==MissionLog)
+        // Use instanceof check if polymorphic queries were needed and an Inheritance strategy was used
+        if (o == null || getClass() != o.getClass()) return false;
+        Log log = (Log) o;
+         // Handle transient instances (ID=0)
+        if (logID == 0 && log.logID == 0) {
+             return this == o; // Or super.equals(o)
+        }
+        return logID == log.logID; // Compare by ID once persisted
+    }
+
+    @Override
+    public int hashCode() {
+         // Use ID and class for hash code
+         // Consistent with equals - different Log types should have different hash codes even with same ID
+         return Objects.hash(logID, getClass());
+        // Simpler alternative if only ID matters and class is checked in equals:
+        // return Objects.hash(logID);
+    }
+
+    // --- toString() ---
+    // Keep or modify UMPLE version, but avoid associations
+     @Override
+     public String toString() {
+         return getClass().getSimpleName() + "{" + // Show actual subclass type
+                 "logID=" + logID +
+                 ", logDate=" + logDate +
+                 ", logTime=" + logTime +
+                 ", logType=" + logType +
+                 ", logMessage='" + logMessage + '\'' +
+                 '}';
+     }
 }
-
-

@@ -1,299 +1,244 @@
 package com.terraformers.model;
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
 
+// Import JPA and other necessary classes
+import java.util.ArrayList;
+import java.util.List; // Keep if used by factory method
+import java.util.Objects;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 // line 145 "model.ump"
 // line 250 "model.ump"
-public class Motor
-{
 
-  //------------------------
-  // ENUMERATIONS
-  //------------------------
+@Entity
+@Table(name = "motors")
+public class Motor {
 
-  public enum MotorPosition { Front, Back, Left, Right }
-  public enum MotorStatus { Active, Inactive, Faulty }
-  public enum MotorType { TypeX, TypeY }
+    //------------------------
+    // ENUMERATIONS
+    //------------------------
 
-  //------------------------
-  // MEMBER VARIABLES
-  //------------------------
+    public enum MotorPosition { Front, Back, Left, Right }
+    public enum MotorStatus { Active, Inactive, Faulty }
+    public enum MotorType { TypeX, TypeY }
 
-  //Motor Attributes
-  private int motorID;
-  private float maxSpeed;
-  private float powerConsumption;
-  private MotorPosition position;
-  private MotorStatus status;
-  private MotorType motorType;
+    //------------------------
+    // MEMBER VARIABLES
+    //------------------------
 
-  //Motor Associations
-  private List<MotorReading> motorReadings;
-  private AvatarBrain avatarBrain;
+    // --- Motor Attributes ---
+    @Id
+    // Assuming manual ID for now
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "motor_id", nullable = false)
+    private int motorID;
 
-  //------------------------
-  // CONSTRUCTOR
-  //------------------------
+    @Column(name = "max_speed")
+    private float maxSpeed;
 
-  public Motor(int aMotorID, float aMaxSpeed, float aPowerConsumption, MotorPosition aPosition, MotorStatus aStatus, MotorType aMotorType, AvatarBrain aAvatarBrain)
-  {
-    motorID = aMotorID;
-    maxSpeed = aMaxSpeed;
-    powerConsumption = aPowerConsumption;
-    position = aPosition;
-    status = aStatus;
-    motorType = aMotorType;
-    motorReadings = new ArrayList<MotorReading>();
-    boolean didAddAvatarBrain = setAvatarBrain(aAvatarBrain);
-    if (!didAddAvatarBrain)
-    {
-      throw new RuntimeException("Unable to create motor due to avatarBrain. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-  }
+    @Column(name = "power_consumption")
+    private float powerConsumption;
 
-  //------------------------
-  // INTERFACE
-  //------------------------
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10) // e.g., Front, Back, Left, Right
+    private MotorPosition position;
 
-  public boolean setMotorID(int aMotorID)
-  {
-    boolean wasSet = false;
-    motorID = aMotorID;
-    wasSet = true;
-    return wasSet;
-  }
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20) // e.g., Active, Inactive, Faulty
+    private MotorStatus status;
 
-  public boolean setMaxSpeed(float aMaxSpeed)
-  {
-    boolean wasSet = false;
-    maxSpeed = aMaxSpeed;
-    wasSet = true;
-    return wasSet;
-  }
+    @Enumerated(EnumType.STRING)
+    @Column(name = "motor_type", length = 10) // e.g., TypeX, TypeY
+    private MotorType motorType;
 
-  public boolean setPowerConsumption(float aPowerConsumption)
-  {
-    boolean wasSet = false;
-    powerConsumption = aPowerConsumption;
-    wasSet = true;
-    return wasSet;
-  }
+    // --- Motor Associations ---
 
-  public boolean setPosition(MotorPosition aPosition)
-  {
-    boolean wasSet = false;
-    position = aPosition;
-    wasSet = true;
-    return wasSet;
-  }
+    // One Motor has Many MotorReadings. MotorReading entity has the FK.
+    @OneToMany(
+            mappedBy = "motor",            // Refers to 'motor' field in MotorReading entity
+            cascade = CascadeType.ALL,     // Operations on Motor cascade to its readings
+            orphanRemoval = true,          // Removing reading from list deletes it
+            fetch = FetchType.LAZY
+    )
+    private List<MotorReading> motorReadings = new ArrayList<>();
 
-  public boolean setStatus(MotorStatus aStatus)
-  {
-    boolean wasSet = false;
-    status = aStatus;
-    wasSet = true;
-    return wasSet;
-  }
+    // Many Motors belong to One AvatarBrain. This side owns the Foreign Key.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "avatar_brain_id", nullable = false) // FK column in 'motors' table
+    private AvatarBrain avatarBrain;
 
-  public boolean setMotorType(MotorType aMotorType)
-  {
-    boolean wasSet = false;
-    motorType = aMotorType;
-    wasSet = true;
-    return wasSet;
-  }
+    //------------------------
+    // CONSTRUCTOR
+    //------------------------
 
-  public int getMotorID()
-  {
-    return motorID;
-  }
-
-  public float getMaxSpeed()
-  {
-    return maxSpeed;
-  }
-
-  public float getPowerConsumption()
-  {
-    return powerConsumption;
-  }
-
-  public MotorPosition getPosition()
-  {
-    return position;
-  }
-
-  public MotorStatus getStatus()
-  {
-    return status;
-  }
-
-  public MotorType getMotorType()
-  {
-    return motorType;
-  }
-  /* Code from template association_GetMany */
-  public MotorReading getMotorReading(int index)
-  {
-    MotorReading aMotorReading = motorReadings.get(index);
-    return aMotorReading;
-  }
-
-  /**
-   * Association: Each Motor belongs to one AvatarBrain.
-   * Association: One Motor has many MotorReadings.
-   */
-  public List<MotorReading> getMotorReadings()
-  {
-    List<MotorReading> newMotorReadings = Collections.unmodifiableList(motorReadings);
-    return newMotorReadings;
-  }
-
-  public int numberOfMotorReadings()
-  {
-    int number = motorReadings.size();
-    return number;
-  }
-
-  public boolean hasMotorReadings()
-  {
-    boolean has = motorReadings.size() > 0;
-    return has;
-  }
-
-  public int indexOfMotorReading(MotorReading aMotorReading)
-  {
-    int index = motorReadings.indexOf(aMotorReading);
-    return index;
-  }
-  /* Code from template association_GetOne */
-  public AvatarBrain getAvatarBrain()
-  {
-    return avatarBrain;
-  }
-  /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfMotorReadings()
-  {
-    return 0;
-  }
-  /* Code from template association_AddManyToOne */
-  public MotorReading addMotorReading(int aReadingID, LocalDateTime aTimeStamp, float aCurrentSpeed, String aDirection, float aCurrentPower)
-  {
-    return new MotorReading(aReadingID, aTimeStamp, aCurrentSpeed, aDirection, aCurrentPower, this);
-  }
-
-  public boolean addMotorReading(MotorReading aMotorReading)
-  {
-    boolean wasAdded = false;
-    if (motorReadings.contains(aMotorReading)) { return false; }
-    Motor existingMotor = aMotorReading.getMotor();
-    boolean isNewMotor = existingMotor != null && !this.equals(existingMotor);
-    if (isNewMotor)
-    {
-      aMotorReading.setMotor(this);
-    }
-    else
-    {
-      motorReadings.add(aMotorReading);
-    }
-    wasAdded = true;
-    return wasAdded;
-  }
-
-  public boolean removeMotorReading(MotorReading aMotorReading)
-  {
-    boolean wasRemoved = false;
-    //Unable to remove aMotorReading, as it must always have a motor
-    if (!this.equals(aMotorReading.getMotor()))
-    {
-      motorReadings.remove(aMotorReading);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
-  /* Code from template association_AddIndexControlFunctions */
-  public boolean addMotorReadingAt(MotorReading aMotorReading, int index)
-  {  
-    boolean wasAdded = false;
-    if(addMotorReading(aMotorReading))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfMotorReadings()) { index = numberOfMotorReadings() - 1; }
-      motorReadings.remove(aMotorReading);
-      motorReadings.add(index, aMotorReading);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
-
-  public boolean addOrMoveMotorReadingAt(MotorReading aMotorReading, int index)
-  {
-    boolean wasAdded = false;
-    if(motorReadings.contains(aMotorReading))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfMotorReadings()) { index = numberOfMotorReadings() - 1; }
-      motorReadings.remove(aMotorReading);
-      motorReadings.add(index, aMotorReading);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addMotorReadingAt(aMotorReading, index);
-    }
-    return wasAdded;
-  }
-  /* Code from template association_SetOneToMany */
-  public boolean setAvatarBrain(AvatarBrain aAvatarBrain)
-  {
-    boolean wasSet = false;
-    if (aAvatarBrain == null)
-    {
-      return wasSet;
+    // JPA requires a no-arg constructor
+    public Motor() {
     }
 
-    AvatarBrain existingAvatarBrain = avatarBrain;
-    avatarBrain = aAvatarBrain;
-    if (existingAvatarBrain != null && !existingAvatarBrain.equals(aAvatarBrain))
-    {
-      existingAvatarBrain.removeMotor(this);
+    // Original UMPLE constructor
+    public Motor(int aMotorID, float aMaxSpeed, float aPowerConsumption, MotorPosition aPosition, MotorStatus aStatus, MotorType aMotorType, AvatarBrain aAvatarBrain) {
+        this.motorID = aMotorID;
+        this.maxSpeed = aMaxSpeed;
+        this.powerConsumption = aPowerConsumption;
+        this.position = aPosition;
+        this.status = aStatus;
+        this.motorType = aMotorType;
+        this.motorReadings = new ArrayList<>(); // Initialize list
+        // Use JPA-aware setter
+        this.setAvatarBrain(aAvatarBrain);
+        // Constructor check (!didAdd...) usually not needed
     }
-    avatarBrain.addMotor(this);
-    wasSet = true;
-    return wasSet;
-  }
 
-  public void delete()
-  {
-    for(int i=motorReadings.size(); i > 0; i--)
-    {
-      MotorReading aMotorReading = motorReadings.get(i - 1);
-      aMotorReading.delete();
+    //------------------------
+    // INTERFACE (Getters/Setters)
+    //------------------------
+    // Keep standard getters and setters
+
+    public boolean setMotorID(int aMotorID) { this.motorID = aMotorID; return true; }
+    public int getMotorID() { return motorID; }
+
+    public boolean setMaxSpeed(float aMaxSpeed) { this.maxSpeed = aMaxSpeed; return true; }
+    public float getMaxSpeed() { return maxSpeed; }
+
+    public boolean setPowerConsumption(float aPowerConsumption) { this.powerConsumption = aPowerConsumption; return true; }
+    public float getPowerConsumption() { return powerConsumption; }
+
+    public boolean setPosition(MotorPosition aPosition) { this.position = aPosition; return true; }
+    public MotorPosition getPosition() { return position; }
+
+    public boolean setStatus(MotorStatus aStatus) { this.status = aStatus; return true; }
+    public MotorStatus getStatus() { return status; }
+
+    public boolean setMotorType(MotorType aMotorType) { this.motorType = aMotorType; return true; }
+    public MotorType getMotorType() { return motorType; }
+
+
+    // --- Association Accessors/Mutators (Review/Replace UMPLE versions) ---
+
+    public List<MotorReading> getMotorReadings() {
+        return motorReadings; // Direct list for JPA lazy loading
     }
-    AvatarBrain placeholderAvatarBrain = avatarBrain;
-    this.avatarBrain = null;
-    if(placeholderAvatarBrain != null)
-    {
-      placeholderAvatarBrain.removeMotor(this);
+    public int numberOfMotorReadings() { return this.motorReadings.size(); }
+    public boolean hasMotorReadings() { return !this.motorReadings.isEmpty(); }
+    public int indexOfMotorReading(MotorReading aMotorReading) { return this.motorReadings.indexOf(aMotorReading); }
+    public MotorReading getMotorReading(int index) { /* Add bounds check */ return motorReadings.get(index); }
+    public static int minimumNumberOfMotorReadings() { return 0; } // Keep if needed for service logic
+
+
+    public AvatarBrain getAvatarBrain() { return avatarBrain; }
+
+    // --- JPA-aware Add/Remove for MotorReadings collection ---
+
+    public void addMotorReading(MotorReading motorReading) {
+        if (motorReading != null && !this.motorReadings.contains(motorReading)) {
+            this.motorReadings.add(motorReading);
+            if (!this.equals(motorReading.getMotor())) { // Avoid loop
+                motorReading.setMotor(this);
+            }
+        }
     }
-  }
+
+    public void removeMotorReading(MotorReading motorReading) {
+        if (motorReading != null && this.motorReadings.contains(motorReading)) {
+            this.motorReadings.remove(motorReading);
+             if (this.equals(motorReading.getMotor())) { // Break other side
+                 motorReading.setMotor(null);
+             }
+        }
+        // Note: Original UMPLE logic prevented removal if reading pointed here.
+    }
+
+     /**
+     * Sets the AvatarBrain for this Motor, maintaining bidirectional consistency.
+     * @param newAvatarBrain The AvatarBrain this motor belongs to. Cannot be null.
+     * @return boolean true if successful.
+     */
+    public boolean setAvatarBrain(AvatarBrain newAvatarBrain) {
+         if (newAvatarBrain == null) {
+             // Decide handling based on requirements (is brain mandatory?)
+             // throw new IllegalArgumentException("AvatarBrain cannot be null for Motor");
+             return false; // Following original UMPLE check pattern
+         }
+
+        // Avoid self-assignment loop / unnecessary work
+        if (Objects.equals(this.avatarBrain, newAvatarBrain)) {
+            return true;
+        }
+
+        // If currently associated with a different brain, remove from its list
+        if (this.avatarBrain != null) {
+            this.avatarBrain.removeMotor(this); // Use helper on AvatarBrain
+        }
+
+        // Set the new brain reference on this motor
+        this.avatarBrain = newAvatarBrain;
+
+        // Add this motor to the new brain's list
+        this.avatarBrain.addMotor(this); // Use helper on AvatarBrain
+
+        return true;
+    }
 
 
-  public String toString()
-  {
-    return super.toString() + "["+
-            "motorID" + ":" + getMotorID()+ "," +
-            "maxSpeed" + ":" + getMaxSpeed()+ "," +
-            "powerConsumption" + ":" + getPowerConsumption()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "position" + "=" + (getPosition() != null ? !getPosition().equals(this)  ? getPosition().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "status" + "=" + (getStatus() != null ? !getStatus().equals(this)  ? getStatus().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "motorType" + "=" + (getMotorType() != null ? !getMotorType().equals(this)  ? getMotorType().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "avatarBrain = "+(getAvatarBrain()!=null?Integer.toHexString(System.identityHashCode(getAvatarBrain())):"null");
-  }
+    // UMPLE factory/index methods usually removed/refactored for JPA
+    // public MotorReading addMotorReading(...) { ... }
+    // public boolean addMotorReadingAt(...) { ... }
+    // public boolean addOrMoveMotorReadingAt(...) { ... }
+
+
+    // --- Delete Method ---
+    // Handled by repository.delete(motor)
+    // Cascade settings manage associated entities.
+    public void delete() {
+         // Break link with AvatarBrain *before* deletion
+         if (this.avatarBrain != null) {
+             // AvatarBrain placeholderAvatarBrain = avatarBrain; // Use correct reference
+             AvatarBrain placeholderAvatarBrain = this.avatarBrain;
+             this.avatarBrain = null; // Null internal ref first
+             placeholderAvatarBrain.removeMotor(this); // Tell brain to remove this motor
+         }
+        // CascadeType.ALL on motorReadings handles deleting children
+        // No need to loop through motorReadings here if cascade is set
+         // super.delete(); // If extending a class with delete()
+    }
+
+
+    // --- equals() and hashCode() ---
+     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Motor)) return false;
+        Motor motor = (Motor) o;
+        if (motorID == 0 && motor.motorID == 0) return this == o;
+        return motorID == motor.motorID;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(motorID);
+    }
+
+    // --- toString() ---
+    @Override
+    public String toString() {
+        return "Motor{" +
+                "motorID=" + motorID +
+                ", maxSpeed=" + maxSpeed +
+                ", powerConsumption=" + powerConsumption +
+                ", position=" + position +
+                ", status=" + status +
+                ", motorType=" + motorType +
+                ", avatarBrainId=" + (avatarBrain != null ? avatarBrain.getAvatarBrainID() : "null") +
+                '}';
+    }
 }
-
-

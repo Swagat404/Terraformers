@@ -1,265 +1,227 @@
 package com.terraformers.model;
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
 
+// Import JPA and other necessary classes
+import java.util.ArrayList;
+import java.util.List; // Keep if used by factory method
+import java.util.Objects;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 // line 158 "model.ump"
 // line 256 "model.ump"
-public class Sensor
-{
 
-  //------------------------
-  // ENUMERATIONS
-  //------------------------
+@Entity
+@Table(name = "sensors")
+public class Sensor {
 
-  public enum SensorMountPosition { Front, Back, Left, Right }
-  public enum SensorStatus { Active, Inactive, Faulty }
-  public enum SensorType { Type1, Type2 }
+    //------------------------
+    // ENUMERATIONS
+    //------------------------
 
-  //------------------------
-  // MEMBER VARIABLES
-  //------------------------
+    public enum SensorMountPosition { Front, Back, Left, Right }
+    public enum SensorStatus { Active, Inactive, Faulty }
+    public enum SensorType { Type1, Type2 }
 
-  //Sensor Attributes
-  private int sensorID;
-  private SensorMountPosition mountPosition;
-  private SensorStatus status;
-  private SensorType sensorType;
+    //------------------------
+    // MEMBER VARIABLES
+    //------------------------
 
-  //Sensor Associations
-  private List<SensorReading> sensorReadings;
-  private Avatar avatar;
+    // --- Sensor Attributes ---
+    @Id
+    // Assuming manual ID for now
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "sensor_id", nullable = false)
+    private int sensorID;
 
-  //------------------------
-  // CONSTRUCTOR
-  //------------------------
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mount_position", length = 10)
+    private SensorMountPosition mountPosition;
 
-  public Sensor(int aSensorID, SensorMountPosition aMountPosition, SensorStatus aStatus, SensorType aSensorType, Avatar aAvatar)
-  {
-    sensorID = aSensorID;
-    mountPosition = aMountPosition;
-    status = aStatus;
-    sensorType = aSensorType;
-    sensorReadings = new ArrayList<SensorReading>();
-    boolean didAddAvatar = setAvatar(aAvatar);
-    if (!didAddAvatar)
-    {
-      throw new RuntimeException("Unable to create sensor due to avatar. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-  }
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20) // Active, Inactive, Faulty
+    private SensorStatus status;
 
-  //------------------------
-  // INTERFACE
-  //------------------------
+    @Enumerated(EnumType.STRING)
+    @Column(name = "sensor_type", length = 10) // Type1, Type2
+    private SensorType sensorType;
 
-  public boolean setSensorID(int aSensorID)
-  {
-    boolean wasSet = false;
-    sensorID = aSensorID;
-    wasSet = true;
-    return wasSet;
-  }
+    // --- Sensor Associations ---
 
-  public boolean setMountPosition(SensorMountPosition aMountPosition)
-  {
-    boolean wasSet = false;
-    mountPosition = aMountPosition;
-    wasSet = true;
-    return wasSet;
-  }
+    // One Sensor has Many SensorReadings. SensorReading entity has the FK.
+    @OneToMany(
+            mappedBy = "sensor",           // Refers to 'sensor' field in SensorReading entity
+            cascade = CascadeType.ALL,     // Operations on Sensor cascade to its readings
+            orphanRemoval = true,          // Removing reading from list deletes it
+            fetch = FetchType.LAZY
+    )
+    private List<SensorReading> sensorReadings = new ArrayList<>();
 
-  public boolean setStatus(SensorStatus aStatus)
-  {
-    boolean wasSet = false;
-    status = aStatus;
-    wasSet = true;
-    return wasSet;
-  }
+    // Many Sensors belong to One Avatar. This side owns the Foreign Key.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "avatar_id", nullable = false) // FK column in 'sensors' table
+    private Avatar avatar;
 
-  public boolean setSensorType(SensorType aSensorType)
-  {
-    boolean wasSet = false;
-    sensorType = aSensorType;
-    wasSet = true;
-    return wasSet;
-  }
+    //------------------------
+    // CONSTRUCTOR
+    //------------------------
 
-  public int getSensorID()
-  {
-    return sensorID;
-  }
-
-  public SensorMountPosition getMountPosition()
-  {
-    return mountPosition;
-  }
-
-  public SensorStatus getStatus()
-  {
-    return status;
-  }
-
-  public SensorType getSensorType()
-  {
-    return sensorType;
-  }
-  /* Code from template association_GetMany */
-  public SensorReading getSensorReading(int index)
-  {
-    SensorReading aSensorReading = sensorReadings.get(index);
-    return aSensorReading;
-  }
-
-  /**
-   * Association: Each Sensor belongs to one Avatar.
-   * Association: One Sensor has many SensorReadings.
-   */
-  public List<SensorReading> getSensorReadings()
-  {
-    List<SensorReading> newSensorReadings = Collections.unmodifiableList(sensorReadings);
-    return newSensorReadings;
-  }
-
-  public int numberOfSensorReadings()
-  {
-    int number = sensorReadings.size();
-    return number;
-  }
-
-  public boolean hasSensorReadings()
-  {
-    boolean has = sensorReadings.size() > 0;
-    return has;
-  }
-
-  public int indexOfSensorReading(SensorReading aSensorReading)
-  {
-    int index = sensorReadings.indexOf(aSensorReading);
-    return index;
-  }
-  /* Code from template association_GetOne */
-  public Avatar getAvatar()
-  {
-    return avatar;
-  }
-  /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfSensorReadings()
-  {
-    return 0;
-  }
-  /* Code from template association_AddManyToOne */
-  public SensorReading addSensorReading(int aReadingID, LocalDateTime aTimeStamp, float aValue)
-  {
-    return new SensorReading(aReadingID, aTimeStamp, aValue, this);
-  }
-
-  public boolean addSensorReading(SensorReading aSensorReading)
-  {
-    boolean wasAdded = false;
-    if (sensorReadings.contains(aSensorReading)) { return false; }
-    Sensor existingSensor = aSensorReading.getSensor();
-    boolean isNewSensor = existingSensor != null && !this.equals(existingSensor);
-    if (isNewSensor)
-    {
-      aSensorReading.setSensor(this);
-    }
-    else
-    {
-      sensorReadings.add(aSensorReading);
-    }
-    wasAdded = true;
-    return wasAdded;
-  }
-
-  public boolean removeSensorReading(SensorReading aSensorReading)
-  {
-    boolean wasRemoved = false;
-    //Unable to remove aSensorReading, as it must always have a sensor
-    if (!this.equals(aSensorReading.getSensor()))
-    {
-      sensorReadings.remove(aSensorReading);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
-  /* Code from template association_AddIndexControlFunctions */
-  public boolean addSensorReadingAt(SensorReading aSensorReading, int index)
-  {  
-    boolean wasAdded = false;
-    if(addSensorReading(aSensorReading))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfSensorReadings()) { index = numberOfSensorReadings() - 1; }
-      sensorReadings.remove(aSensorReading);
-      sensorReadings.add(index, aSensorReading);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
-
-  public boolean addOrMoveSensorReadingAt(SensorReading aSensorReading, int index)
-  {
-    boolean wasAdded = false;
-    if(sensorReadings.contains(aSensorReading))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfSensorReadings()) { index = numberOfSensorReadings() - 1; }
-      sensorReadings.remove(aSensorReading);
-      sensorReadings.add(index, aSensorReading);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addSensorReadingAt(aSensorReading, index);
-    }
-    return wasAdded;
-  }
-  /* Code from template association_SetOneToMany */
-  public boolean setAvatar(Avatar aAvatar)
-  {
-    boolean wasSet = false;
-    if (aAvatar == null)
-    {
-      return wasSet;
+    // JPA requires a no-arg constructor
+    public Sensor() {
     }
 
-    Avatar existingAvatar = avatar;
-    avatar = aAvatar;
-    if (existingAvatar != null && !existingAvatar.equals(aAvatar))
-    {
-      existingAvatar.removeSensor(this);
+    // Original UMPLE constructor
+    public Sensor(int aSensorID, SensorMountPosition aMountPosition, SensorStatus aStatus, SensorType aSensorType, Avatar aAvatar) {
+        this.sensorID = aSensorID;
+        this.mountPosition = aMountPosition;
+        this.status = aStatus;
+        this.sensorType = aSensorType;
+        this.sensorReadings = new ArrayList<>(); // Initialize list
+        // Use JPA-aware setter
+        this.setAvatar(aAvatar);
+        // Constructor check (!didAdd...) usually not needed
     }
-    avatar.addSensor(this);
-    wasSet = true;
-    return wasSet;
-  }
 
-  public void delete()
-  {
-    for(int i=sensorReadings.size(); i > 0; i--)
-    {
-      SensorReading aSensorReading = sensorReadings.get(i - 1);
-      aSensorReading.delete();
+    //------------------------
+    // INTERFACE (Getters/Setters)
+    //------------------------
+    // Keep standard getters and setters
+
+    public boolean setSensorID(int aSensorID) { this.sensorID = aSensorID; return true; }
+    public int getSensorID() { return sensorID; }
+
+    public boolean setMountPosition(SensorMountPosition aMountPosition) { this.mountPosition = aMountPosition; return true; }
+    public SensorMountPosition getMountPosition() { return mountPosition; }
+
+    public boolean setStatus(SensorStatus aStatus) { this.status = aStatus; return true; }
+    public SensorStatus getStatus() { return status; }
+
+    public boolean setSensorType(SensorType aSensorType) { this.sensorType = aSensorType; return true; }
+    public SensorType getSensorType() { return sensorType; }
+
+
+    // --- Association Accessors/Mutators (Review/Replace UMPLE versions) ---
+
+    public List<SensorReading> getSensorReadings() {
+        return sensorReadings; // Direct list for JPA lazy loading
     }
-    Avatar placeholderAvatar = avatar;
-    this.avatar = null;
-    if(placeholderAvatar != null)
-    {
-      placeholderAvatar.removeSensor(this);
+    public int numberOfSensorReadings() { return this.sensorReadings.size(); }
+    public boolean hasSensorReadings() { return !this.sensorReadings.isEmpty(); }
+    public int indexOfSensorReading(SensorReading aSensorReading) { return this.sensorReadings.indexOf(aSensorReading); }
+    public SensorReading getSensorReading(int index) { /* Add bounds check */ return sensorReadings.get(index); }
+    public static int minimumNumberOfSensorReadings() { return 0; } // Keep if needed for service logic
+
+
+    public Avatar getAvatar() { return avatar; }
+
+    // --- JPA-aware Add/Remove for SensorReadings collection ---
+
+    public void addSensorReading(SensorReading sensorReading) {
+        if (sensorReading != null && !this.sensorReadings.contains(sensorReading)) {
+            this.sensorReadings.add(sensorReading);
+            if (!this.equals(sensorReading.getSensor())) { // Avoid loop
+                sensorReading.setSensor(this);
+            }
+        }
     }
-  }
+
+    public void removeSensorReading(SensorReading sensorReading) {
+         if (sensorReading != null && this.sensorReadings.contains(sensorReading)) {
+            this.sensorReadings.remove(sensorReading);
+             if (this.equals(sensorReading.getSensor())) { // Break other side
+                 sensorReading.setSensor(null);
+             }
+        }
+        // Note: Original UMPLE logic prevented removal if reading pointed here.
+    }
+
+     /**
+     * Sets the Avatar for this Sensor, maintaining bidirectional consistency.
+     * @param newAvatar The Avatar this sensor belongs to. Cannot be null.
+     * @return boolean true if successful.
+     */
+    public boolean setAvatar(Avatar newAvatar) {
+         if (newAvatar == null) {
+             // Decide handling (is avatar mandatory?)
+             // throw new IllegalArgumentException("Avatar cannot be null for Sensor");
+             return false; // Following original UMPLE check pattern
+         }
+
+        // Avoid self-assignment loop / unnecessary work
+        if (Objects.equals(this.avatar, newAvatar)) {
+            return true;
+        }
+
+        // If currently associated with a different avatar, remove from its list
+        if (this.avatar != null) {
+            this.avatar.removeSensor(this); // Use helper on Avatar
+        }
+
+        // Set the new avatar reference on this sensor
+        this.avatar = newAvatar;
+
+        // Add this sensor to the new avatar's list
+        this.avatar.addSensor(this); // Use helper on Avatar
+
+        return true;
+    }
 
 
-  public String toString()
-  {
-    return super.toString() + "["+
-            "sensorID" + ":" + getSensorID()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "mountPosition" + "=" + (getMountPosition() != null ? !getMountPosition().equals(this)  ? getMountPosition().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "status" + "=" + (getStatus() != null ? !getStatus().equals(this)  ? getStatus().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "sensorType" + "=" + (getSensorType() != null ? !getSensorType().equals(this)  ? getSensorType().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "avatar = "+(getAvatar()!=null?Integer.toHexString(System.identityHashCode(getAvatar())):"null");
-  }
+    // UMPLE factory/index methods usually removed/refactored for JPA
+    // public SensorReading addSensorReading(...) { ... }
+    // public boolean addSensorReadingAt(...) { ... }
+    // public boolean addOrMoveSensorReadingAt(...) { ... }
+
+
+    // --- Delete Method ---
+    // Handled by repository.delete(sensor)
+    public void delete() {
+         // Break link with Avatar *before* deletion
+         if (this.avatar != null) {
+             // Avatar placeholderAvatar = avatar; // Use correct reference
+             Avatar placeholderAvatar = this.avatar;
+             this.avatar = null; // Null internal ref first
+             placeholderAvatar.removeSensor(this); // Tell avatar to remove this sensor
+         }
+        // CascadeType.ALL on sensorReadings handles deleting children
+        // No need to loop through sensorReadings here if cascade is set
+         // super.delete(); // If extending a class with delete()
+    }
+
+
+    // --- equals() and hashCode() ---
+     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Sensor)) return false;
+        Sensor sensor = (Sensor) o;
+        if (sensorID == 0 && sensor.sensorID == 0) return this == o;
+        return sensorID == sensor.sensorID;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sensorID);
+    }
+
+    // --- toString() ---
+    @Override
+    public String toString() {
+        return "Sensor{" +
+                "sensorID=" + sensorID +
+                ", mountPosition=" + mountPosition +
+                ", status=" + status +
+                ", sensorType=" + sensorType +
+                ", avatarId=" + (avatar != null ? avatar.getAvatarID() : "null") +
+                '}';
+    }
 }

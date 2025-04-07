@@ -1,340 +1,213 @@
 package com.terraformers.model;
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
 
+// Import JPA and other necessary classes
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects; // Keep if used by factory method
 
-import java.util.*;
-
-
-import java.sql.Date;
-import java.sql.Time;
+import javax.persistence.CascadeType; // Keep if used by factory method
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 // line 93 "model.ump"
 // line 217 "model.ump"
-public class Mission
-{
 
-  //------------------------
-  // ENUMERATIONS
-  //------------------------
+@Entity
+@Table(name = "missions")
+public class Mission {
 
-  public enum MissionStatus { Planned, Ongoing, Failed, Completed, Aborted }
-  public enum AvatarColor { Red, Blue, Green, Yellow }
+    //------------------------
+    // ENUMERATIONS
+    //------------------------
 
-  //------------------------
-  // MEMBER VARIABLES
-  //------------------------
+    public enum MissionStatus { Planned, Ongoing, Failed, Completed, Aborted }
+    // Note: AvatarColor enum belongs in Avatar.java
+    // public enum AvatarColor { Red, Blue, Green, Yellow }
 
-  //Mission Attributes
-  private int missionID;
-  private String missionName;
-  private MissionStatus status;
-  private String objective;
+    //------------------------
+    // MEMBER VARIABLES
+    //------------------------
 
-  //Mission Associations
-  private List<MissionLog> missionLogs;
-  private List<Avatar> avatars;
+    // --- Mission Attributes ---
+    @Id
+    // Assuming manual ID for now
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "mission_id", nullable = false)
+    private int missionID;
 
-  //------------------------
-  // CONSTRUCTOR
-  //------------------------
+    @Column(name = "mission_name", length = 255)
+    private String missionName;
 
-  public Mission(int aMissionID, String aMissionName, MissionStatus aStatus, String aObjective)
-  {
-    missionID = aMissionID;
-    missionName = aMissionName;
-    status = aStatus;
-    objective = aObjective;
-    missionLogs = new ArrayList<MissionLog>();
-    avatars = new ArrayList<Avatar>();
-  }
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 20)
+    private MissionStatus status;
 
-  //------------------------
-  // INTERFACE
-  //------------------------
+    @Column(length = 1000) // Example length
+    // @Lob // Use if objective can be very long
+    private String objective;
 
-  public boolean setMissionID(int aMissionID)
-  {
-    boolean wasSet = false;
-    missionID = aMissionID;
-    wasSet = true;
-    return wasSet;
-  }
+    // --- Mission Associations ---
 
-  public boolean setMissionName(String aMissionName)
-  {
-    boolean wasSet = false;
-    missionName = aMissionName;
-    wasSet = true;
-    return wasSet;
-  }
+    // One Mission has Many MissionLogs. MissionLog entity has the FK.
+    @OneToMany(
+            mappedBy = "mission",          // Refers to 'mission' field in MissionLog entity
+            cascade = CascadeType.ALL,     // Operations on Mission cascade to its logs
+            orphanRemoval = true,          // Removing log from list deletes it
+            fetch = FetchType.LAZY
+    )
+    private List<MissionLog> missionLogs = new ArrayList<>();
 
-  public boolean setStatus(MissionStatus aStatus)
-  {
-    boolean wasSet = false;
-    status = aStatus;
-    wasSet = true;
-    return wasSet;
-  }
+    // One Mission has Many Avatars. Avatar entity has the FK.
+    @OneToMany(
+            mappedBy = "mission",          // Refers to 'mission' field in Avatar entity
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}, // Choose cascade carefully - maybe don't delete Avatars when Mission deleted?
+            fetch = FetchType.LAZY
+    )
+    private List<Avatar> avatars = new ArrayList<>();
 
-  public boolean setObjective(String aObjective)
-  {
-    boolean wasSet = false;
-    objective = aObjective;
-    wasSet = true;
-    return wasSet;
-  }
+    //------------------------
+    // CONSTRUCTOR
+    //------------------------
 
-  public int getMissionID()
-  {
-    return missionID;
-  }
-
-  public String getMissionName()
-  {
-    return missionName;
-  }
-
-  public MissionStatus getStatus()
-  {
-    return status;
-  }
-
-  public String getObjective()
-  {
-    return objective;
-  }
-  /* Code from template association_GetMany */
-  public MissionLog getMissionLog(int index)
-  {
-    MissionLog aMissionLog = missionLogs.get(index);
-    return aMissionLog;
-  }
-
-  /**
-   * Association: One Mission has many MissionLogs.
-   */
-  public List<MissionLog> getMissionLogs()
-  {
-    List<MissionLog> newMissionLogs = Collections.unmodifiableList(missionLogs);
-    return newMissionLogs;
-  }
-
-  public int numberOfMissionLogs()
-  {
-    int number = missionLogs.size();
-    return number;
-  }
-
-  public boolean hasMissionLogs()
-  {
-    boolean has = missionLogs.size() > 0;
-    return has;
-  }
-
-  public int indexOfMissionLog(MissionLog aMissionLog)
-  {
-    int index = missionLogs.indexOf(aMissionLog);
-    return index;
-  }
-  /* Code from template association_GetMany */
-  public Avatar getAvatar(int index)
-  {
-    Avatar aAvatar = avatars.get(index);
-    return aAvatar;
-  }
-
-  public List<Avatar> getAvatars()
-  {
-    List<Avatar> newAvatars = Collections.unmodifiableList(avatars);
-    return newAvatars;
-  }
-
-  public int numberOfAvatars()
-  {
-    int number = avatars.size();
-    return number;
-  }
-
-  public boolean hasAvatars()
-  {
-    boolean has = avatars.size() > 0;
-    return has;
-  }
-
-  public int indexOfAvatar(Avatar aAvatar)
-  {
-    int index = avatars.indexOf(aAvatar);
-    return index;
-  }
-  /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfMissionLogs()
-  {
-    return 0;
-  }
-  /* Code from template association_AddManyToOne */
-  public MissionLog addMissionLog(int aLogID, Date aLogDate, Time aLogTime, Log.LogType aLogType, String aLogMessage)
-  {
-    return new MissionLog(aLogID, aLogDate, aLogTime, aLogType, aLogMessage, this);
-  }
-
-  public boolean addMissionLog(MissionLog aMissionLog)
-  {
-    boolean wasAdded = false;
-    if (missionLogs.contains(aMissionLog)) { return false; }
-    Mission existingMission = aMissionLog.getMission();
-    boolean isNewMission = existingMission != null && !this.equals(existingMission);
-    if (isNewMission)
-    {
-      aMissionLog.setMission(this);
+    // JPA requires a no-arg constructor
+    public Mission() {
     }
-    else
-    {
-      missionLogs.add(aMissionLog);
-    }
-    wasAdded = true;
-    return wasAdded;
-  }
 
-  public boolean removeMissionLog(MissionLog aMissionLog)
-  {
-    boolean wasRemoved = false;
-    //Unable to remove aMissionLog, as it must always have a mission
-    if (!this.equals(aMissionLog.getMission()))
-    {
-      missionLogs.remove(aMissionLog);
-      wasRemoved = true;
+    // Original UMPLE constructor
+    public Mission(int aMissionID, String aMissionName, MissionStatus aStatus, String aObjective) {
+        this.missionID = aMissionID;
+        this.missionName = aMissionName;
+        this.status = aStatus;
+        this.objective = aObjective;
+        this.missionLogs = new ArrayList<>(); // Initialize lists
+        this.avatars = new ArrayList<>();
     }
-    return wasRemoved;
-  }
-  /* Code from template association_AddIndexControlFunctions */
-  public boolean addMissionLogAt(MissionLog aMissionLog, int index)
-  {  
-    boolean wasAdded = false;
-    if(addMissionLog(aMissionLog))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfMissionLogs()) { index = numberOfMissionLogs() - 1; }
-      missionLogs.remove(aMissionLog);
-      missionLogs.add(index, aMissionLog);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
 
-  public boolean addOrMoveMissionLogAt(MissionLog aMissionLog, int index)
-  {
-    boolean wasAdded = false;
-    if(missionLogs.contains(aMissionLog))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfMissionLogs()) { index = numberOfMissionLogs() - 1; }
-      missionLogs.remove(aMissionLog);
-      missionLogs.add(index, aMissionLog);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addMissionLogAt(aMissionLog, index);
-    }
-    return wasAdded;
-  }
-  /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfAvatars()
-  {
-    return 0;
-  }
-  /* Code from template association_AddManyToOne */
-  public Avatar addAvatar(int aAvatarID, String aAvatarName, Avatar.AvatarColor aAvatarColor, Location aLocation, AvatarBrain aAvatarBrain)
-  {
-    return new Avatar(aAvatarID, aAvatarName, aAvatarColor, aLocation, aAvatarBrain, this);
-  }
+    //------------------------
+    // INTERFACE (Getters/Setters)
+    //------------------------
+    // Standard getters and setters needed
 
-  public boolean addAvatar(Avatar aAvatar)
-  {
-    boolean wasAdded = false;
-    if (avatars.contains(aAvatar)) { return false; }
-    Mission existingMission = aAvatar.getMission();
-    boolean isNewMission = existingMission != null && !this.equals(existingMission);
-    if (isNewMission)
-    {
-      aAvatar.setMission(this);
-    }
-    else
-    {
-      avatars.add(aAvatar);
-    }
-    wasAdded = true;
-    return wasAdded;
-  }
+    public boolean setMissionID(int aMissionID) { this.missionID = aMissionID; return true; }
+    public int getMissionID() { return missionID; }
 
-  public boolean removeAvatar(Avatar aAvatar)
-  {
-    boolean wasRemoved = false;
-    //Unable to remove aAvatar, as it must always have a mission
-    if (!this.equals(aAvatar.getMission()))
-    {
-      avatars.remove(aAvatar);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
-  /* Code from template association_AddIndexControlFunctions */
-  public boolean addAvatarAt(Avatar aAvatar, int index)
-  {  
-    boolean wasAdded = false;
-    if(addAvatar(aAvatar))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfAvatars()) { index = numberOfAvatars() - 1; }
-      avatars.remove(aAvatar);
-      avatars.add(index, aAvatar);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
+    public boolean setMissionName(String aMissionName) { this.missionName = aMissionName; return true; }
+    public String getMissionName() { return missionName; }
 
-  public boolean addOrMoveAvatarAt(Avatar aAvatar, int index)
-  {
-    boolean wasAdded = false;
-    if(avatars.contains(aAvatar))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfAvatars()) { index = numberOfAvatars() - 1; }
-      avatars.remove(aAvatar);
-      avatars.add(index, aAvatar);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addAvatarAt(aAvatar, index);
-    }
-    return wasAdded;
-  }
+    public boolean setStatus(MissionStatus aStatus) { this.status = aStatus; return true; }
+    public MissionStatus getStatus() { return status; }
 
-  public void delete()
-  {
-    for(int i=missionLogs.size(); i > 0; i--)
-    {
-      MissionLog aMissionLog = missionLogs.get(i - 1);
-      aMissionLog.delete();
-    }
-    for(int i=avatars.size(); i > 0; i--)
-    {
-      Avatar aAvatar = avatars.get(i - 1);
-      aAvatar.delete();
-    }
-  }
+    public boolean setObjective(String aObjective) { this.objective = aObjective; return true; }
+    public String getObjective() { return objective; }
 
 
-  public String toString()
-  {
-    return super.toString() + "["+
-            "missionID" + ":" + getMissionID()+ "," +
-            "missionName" + ":" + getMissionName()+ "," +
-            "objective" + ":" + getObjective()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "status" + "=" + (getStatus() != null ? !getStatus().equals(this)  ? getStatus().toString().replaceAll("  ","    ") : "this" : "null");
-  }
+    // --- Association Accessors/Mutators (Review/Replace UMPLE versions) ---
+
+    // List getters - return direct list for JPA lazy loading
+    public List<MissionLog> getMissionLogs() { return missionLogs; }
+    public List<Avatar> getAvatars() { return avatars; }
+
+    // List query methods (UMPL E) - Fine as they are
+    public int numberOfMissionLogs() { return missionLogs.size(); }
+    public boolean hasMissionLogs() { return !missionLogs.isEmpty(); }
+    public int indexOfMissionLog(MissionLog aMissionLog) { return missionLogs.indexOf(aMissionLog); }
+    public MissionLog getMissionLog(int index) { /* Add bounds check */ return missionLogs.get(index); }
+
+    public int numberOfAvatars() { return avatars.size(); }
+    public boolean hasAvatars() { return !avatars.isEmpty(); }
+    public int indexOfAvatar(Avatar aAvatar) { return avatars.indexOf(aAvatar); }
+    public Avatar getAvatar(int index) { /* Add bounds check */ return avatars.get(index); }
+
+    // Static minimum methods - Keep if used for service layer validation
+    public static int minimumNumberOfMissionLogs() { return 0; }
+    public static int minimumNumberOfAvatars() { return 0; }
+
+
+    // --- JPA-aware Add/Remove for Collections ---
+
+    public void addMissionLog(MissionLog missionLog) {
+        if (missionLog != null && !this.missionLogs.contains(missionLog)) {
+            this.missionLogs.add(missionLog);
+            if (!this.equals(missionLog.getMission())) { // Avoid loop
+                missionLog.setMission(this);
+            }
+        }
+    }
+
+    public void removeMissionLog(MissionLog missionLog) {
+        if (missionLog != null && this.missionLogs.contains(missionLog)) {
+            this.missionLogs.remove(missionLog);
+            if (this.equals(missionLog.getMission())) { // Break other side
+                missionLog.setMission(null);
+            }
+        }
+         // Note: Original UMPLE logic prevented removal if log pointed here.
+         // JPA approach allows removal from list; link breaking is separate.
+    }
+
+    public void addAvatar(Avatar avatar) {
+        if (avatar != null && !this.avatars.contains(avatar)) {
+            this.avatars.add(avatar);
+            if (!this.equals(avatar.getMission())) { // Avoid loop
+                 avatar.setMission(this);
+            }
+        }
+    }
+
+    public void removeAvatar(Avatar avatar) {
+        if (avatar != null && this.avatars.contains(avatar)) {
+            this.avatars.remove(avatar);
+             if (this.equals(avatar.getMission())) { // Break other side
+                avatar.setMission(null);
+             }
+        }
+         // Note: Original UMPLE logic prevented removal if avatar pointed here.
+    }
+
+
+    // UMPLE factory/index methods usually removed/refactored for JPA
+    // public MissionLog addMissionLog(...) { ... }
+    // public boolean addMissionLogAt(...) { ... }
+    // public Avatar addAvatar(...) { ... }
+    // public boolean addAvatarAt(...) { ... }
+
+
+    // --- Delete Method ---
+    // Handled by repository.delete(mission)
+    // Cascade settings manage associated entities.
+    // public void delete() { ... }
+
+
+    // --- equals() and hashCode() ---
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Mission)) return false;
+        Mission mission = (Mission) o;
+        if (missionID == 0 && mission.missionID == 0) return this == o;
+        return missionID == mission.missionID;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(missionID);
+    }
+
+    // --- toString() ---
+    @Override
+    public String toString() {
+        return "Mission{" +
+                "missionID=" + missionID +
+                ", missionName='" + missionName + '\'' +
+                ", status=" + status +
+                ", objective='" + objective + '\'' +
+                // Avoid printing collections
+                '}';
+    }
 }
-
-
