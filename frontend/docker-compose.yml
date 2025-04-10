@@ -1,7 +1,16 @@
+version: '3'
+
 services:
-  webgl-server:
-    image: nginx:alpine
-    volumes:
-      - ./unity:/usr/share/nginx/html
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "8080:80"
+      - "8000:80"
+    volumes:
+      - ./mars-rover-simulator:/usr/share/nginx/html/mars-rover-simulator
+      - ./Images:/usr/share/nginx/html/Images
+      - ./Landingpage.html:/usr/share/nginx/html/Landingpage.html
+      - ./AboutUs.html:/usr/share/nginx/html/AboutUs.html
+      - ./SelectAvatar.html:/usr/share/nginx/html/SelectAvatar.html
+      - ./SelectYourTerrain.html:/usr/share/nginx/html/SelectYourTerrain.html
