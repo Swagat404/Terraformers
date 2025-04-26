@@ -104,13 +104,17 @@
     <div class="container">
         <div class="title">Select Your <br> Avatar</div>
         <div class="avatar-container">
-            <div class="avatar" onclick="selectAvatar('Blue Speed')">
-                <img src="Images/blue.png" alt="Blue Avatar">
-                <div class="avatar-name">Blue Speed</div>
+            <div class="avatar" onclick="selectAvatar('Basic Auto Mode')">
+                <img src="Images/blue.png" alt="Basic Auto Mode Avatar">
+                <div class="avatar-name">Basic Auto Mode</div>
             </div>
-            <div class="avatar" onclick="selectAvatar('Yellow Classic')">
-                <img src="Images/yellow.png" alt="Yellow Avatar">
-                <div class="avatar-name">Yellow Classic</div>
+            <div class="avatar" onclick="selectAvatar('Manual Mode')">
+                <img src="Images/yellow.png" alt="Manual Mode Avatar">
+                <div class="avatar-name">Manual Mode</div>
+            </div>
+            <div class="avatar" onclick="selectAvatar('Fast & Bouncy Mode')">
+                <img src="Images/yellow.png" alt="Fast & Bouncy Mode Avatar">
+                <div class="avatar-name">Fast & Bouncy Mode</div>
             </div>
         </div>
     </div>
@@ -121,10 +125,12 @@
 
     <script>
         function selectAvatar(avatar) {
-            if (avatar === 'Blue Speed') {
+            if (avatar === 'Basic Auto Mode') {
                 window.location.href = "mars-rover-simulator/index.html";  // Navigate to Unity build
-            } else if (avatar === 'Yellow Classic') {
+            } else if (avatar === 'Manual Mode') {
                 window.location.href = "mars-rover-simulator/index2.html";  // Navigate to Yellow Classic simulation
+            } else if (avatar === 'Fast & Bouncy Mode') {
+                window.location.href = "mars-rover-simulator/index3.html";  // Navigate to Yellow Auto simulation
             }
         }
     

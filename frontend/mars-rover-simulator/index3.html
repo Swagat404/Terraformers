@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Mars Rover Simulator - Manual Mode</title>
+    <title>Mars Rover Simulator - Fast & Bouncy Mode</title>
     <link rel="shortcut icon" href="marsterrain/TemplateData/favicon.ico">
     <link rel="stylesheet" href="marsterrain/TemplateData/style.css">
     <style>
@@ -85,7 +85,7 @@
             height: 100%;
             pointer-events: none;
             z-index: 100;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAwIDEwMDAiPjxwYXRoIGQ9Ik0wLDAgTDEwMCwwIEwxNTAsMTAwIEwxMDAsMTUwIEwwLDEwMCBaIiBmaWxsPSJyZ2JhKDI1NSwgMTc0LCAwLCAwLjUpIiBzdHJva2U9InJnYmEoMjU1LCAxNzQsIDAsIDAuOCkiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Ik0xMDAwLDAgTDkwMCwwIEw4NTAsMTAwIEw5MDAsMTUwIEwxMDAwLDEwMCBaIE0wLDEwMDAgTDAsOTAwIEwxMDAsODUwIEwxNTAsOTAwIEwxMDAsxMDAwIFogTTEwMDAsMTAwMCBMMTAwMCw5MDAgTDkwMCw4NTAgTDg1MCw5MDAgTDkwMCwxMDAwIHoiIGZpbGw9InJnYmEoMjU1LCAxNzQsIDAsIDAuNSkiIHN0cm9rZT0icmdiYSgyNTUsIDE3NCwgMCwgMC44KSIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9zdmc+');
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAwIDEwMDAiPjxwYXRoIGQ9Ik0wLDAgTDEwMCwwIEwxNTAsMTAwIEwxMDAsMTUwIEwwLDEwMCBaIiBmaWxsPSJyZ2JhKDI1NSwgMTc0LCAwLCAwLjUpIiBzdHJva2U9InJnYmEoMjU1LCAxNzQsIDAsIDAuOCkiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Ik0xMDAwLDAgTDkwMCwwIEw4NTAsMTAwIEw5MDAsMTUwIEwxMDAwLDEwMCBaIE0wLDEwMDAgTDAsOTAwIEwxMDAsODUwIEwxNTAsOTAwIEwxMDAsMTAwMCBaIE0xMDAwLDEwMDAgTDEwMDAwLDkwMCBMODUwLDkwMCBMODAwLDkwMCBaIiBmaWxsPSJyZ2JhKDI1NSwgMTc0LCAwLCAwLjUpIiBzdHJva2U9InJnYmEoMjU1LCAxNzQsIDAsIDAuOCkiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPgo=');
         }
 
         #dashboard {
@@ -332,6 +332,32 @@
             color: #ffae00;
         }
 
+        #auto-mode-indicator {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            height: 40px;
+            background-color: rgba(255, 0, 0, 0.5);
+            border: 2px solid red;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
         /* Hide Unity default loading and add our custom one */
         #unity-loading-bar {
             display: none !important;
@@ -340,7 +366,7 @@
 </head>
 <body>
     <div id="loading-screen">
-        <h1>MARS ROVER SIMULATOR - MANUAL MODE</h1>
+        <h1>MARS ROVER SIMULATOR - FAST & BOUNCY MODE</h1>
         <p>INITIALIZING SYSTEMS...</p>
         <div id="loading-bar-container">
             <div id="loading-bar"></div>
@@ -359,7 +385,7 @@
         <div id="unity-warning"></div>
         <div id="unity-footer">
             <div id="unity-fullscreen-button"></div>
-            <div id="unity-build-title">marsSimulation - Manual Mode</div>
+            <div id="unity-build-title">marsSimulation - Fast & Bouncy Mode</div>
         </div>
         
         <!-- Custom simulator UI elements -->
@@ -370,14 +396,16 @@
             <div id="crosshair-circle"></div>
         </div>
 
+        <div id="auto-mode-indicator">AUTONOMOUS MODE</div>
+
         <div id="mission-logs">
             <div class="log-entry">
                 <span class="log-timestamp">T+00:00:00</span>
-                <span class="log-message">Yellow Classic mission initiated. Systems online.</span>
+                <span class="log-message">Yellow Auto mission initiated. Systems online.</span>
             </div>
             <div class="log-entry">
                 <span class="log-timestamp">T+00:00:30</span>
-                <span class="log-message">Rover deployed successfully.</span>
+                <span class="log-message">Rover deployed successfully. Auto-navigation enabled.</span>
             </div>
             <div class="log-entry">
                 <span class="log-timestamp">T+00:01:15</span>
@@ -387,30 +415,26 @@
 
         <div id="controls-overlay">
             <div class="control-section">
-                <div class="control-title">MOVEMENT CONTROLS</div>
+                <div class="control-title">AUTONOMOUS CONTROLS</div>
                 <div class="control-item">
-                    <span>Forward</span>
-                    <span class="key-indicator">W</span>
+                    <span>Auto-Navigation</span>
+                    <span class="key-indicator">ACTIVE</span>
                 </div>
                 <div class="control-item">
-                    <span>Backward</span>
-                    <span class="key-indicator">S</span>
+                    <span>Auto-Jump</span>
+                    <span class="key-indicator">ACTIVE</span>
                 </div>
                 <div class="control-item">
-                    <span>Turn Left</span>
-                    <span class="key-indicator">A</span>
+                    <span>Auto-Run</span>
+                    <span class="key-indicator">ACTIVE</span>
                 </div>
                 <div class="control-item">
-                    <span>Turn Right</span>
-                    <span class="key-indicator">D</span>
+                    <span>Motion Type</span>
+                    <span class="key-indicator">BOUNCY</span>
                 </div>
                 <div class="control-item">
-                    <span>Jump</span>
-                    <span class="key-indicator">SPACE</span>
-                </div>
-                <div class="control-item">
-                    <span>Run</span>
-                    <span class="key-indicator">SHIFT</span>
+                    <span>Speed Profile</span>
+                    <span class="key-indicator">FAST</span>
                 </div>
             </div>
         </div>
@@ -423,7 +447,7 @@
         <div id="speedometer">
             <div id="speedometer-label">SPEED</div>
             <div id="speedometer-value">0.0 m/s</div>
-            <div id="acceleration-indicator">NORMAL</div>
+            <div id="acceleration-indicator">AUTO</div>
         </div>
 
         <div id="dashboard">
@@ -458,8 +482,12 @@
         let currentVelocity = 0;
         let currentDistance = 0;
         let isAccelerating = false;
-        let normalSpeed = 5;
-        let acceleratedSpeed = 10;
+        let normalSpeed = 8; // Faster normal speed for auto mode
+        let acceleratedSpeed = 15; // Even faster when accelerating
+        let currentMovementState = "forward"; // Tracks the current movement state
+        let autoMovementInterval = null;
+        let timeInCurrentState = 0;
+        let lastJumpTime = 0;
         
         // Start loading sequence
         document.addEventListener('DOMContentLoaded', function() {
@@ -553,17 +581,22 @@
                     startCompassUpdates();
                     
                     // Add initial log entries
-                    addLogEntry("Yellow Classic simulation initialized successfully");
+                    addLogEntry("Yellow Auto simulation initialized successfully");
                     addLogEntry("Rover systems online");
+                    addLogEntry("Auto-navigation system initialized");
                     
                     // Schedule some additional logs for immersion
                     setTimeout(() => addLogEntry("Terrain mapping in progress..."), 3000);
-                    setTimeout(() => addLogEntry("Jump capability activated..."), 5000);
-                    setTimeout(() => addLogEntry("Acceleration system online..."), 7000);
+                    setTimeout(() => addLogEntry("Autonomous control activated..."), 5000);
+                    setTimeout(() => addLogEntry("Entering exploration mode..."), 7000);
                     
                     document.querySelector("#unity-fullscreen-button").onclick = () => {
                         unityInstance.SetFullscreen(1);
                     };
+
+                    // Start the auto movement system after Unity is loaded
+                    startAutoMovement();
+                    
                 }).catch((message) => {
                     console.error("Unity initialization error:", message);
                     addLogEntry("ERROR: System initialization failed");
@@ -572,16 +605,213 @@
             
             document.body.appendChild(script);
         }
+
+        // Auto movement system
+        function startAutoMovement() {
+            addLogEntry("Initiating autonomous movement sequence");
+            
+            // Simulate a keyboard event to control the robot directly
+            function simulateKeyEvent(keyCode, type) {
+                const event = new KeyboardEvent(type, {
+                    bubbles: true,
+                    cancelable: true,
+                    keyCode: keyCode,
+                    which: keyCode,
+                    key: keyCode === 32 ? ' ' : String.fromCharCode(keyCode).toLowerCase(),
+                    code: keyCode === 32 ? 'Space' : 'Key' + String.fromCharCode(keyCode)
+                });
+                
+                console.log(`Sending ${type} event for key: ${String.fromCharCode(keyCode) || 'Space'}`);
+                document.dispatchEvent(event);
+            }
+            
+            // Keys - use keyCodes for better browser compatibility
+            const KEY_W = 87; // W key
+            const KEY_A = 65; // A key
+            const KEY_S = 83; // S key
+            const KEY_D = 68; // D key
+            const KEY_SPACE = 32; // Space bar
+            const KEY_SHIFT = 16; // Shift key
+            
+            // Release all keys to reset state
+            function releaseAllKeys() {
+                simulateKeyEvent(KEY_W, 'keyup');
+                simulateKeyEvent(KEY_A, 'keyup');
+                simulateKeyEvent(KEY_S, 'keyup');
+                simulateKeyEvent(KEY_D, 'keyup');
+                simulateKeyEvent(KEY_SPACE, 'keyup');
+                simulateKeyEvent(KEY_SHIFT, 'keyup');
+            }
+            
+            // Choose a random movement state
+            function chooseRandomMovement() {
+                const movements = ["forward", "backward", "left", "right", "jump", "run"];
+                const weights = [0.35, 0.15, 0.15, 0.15, 0.05, 0.15]; // Increased run probability
+                
+                let total = 0;
+                const threshold = Math.random();
+                
+                for (let i = 0; i < movements.length; i++) {
+                    total += weights[i];
+                    if (threshold < total) {
+                        return movements[i];
+                    }
+                }
+                
+                return "forward"; // Default to forward
+            }
+            
+            // Handle keyboard controls for current state
+            function applyMovementState() {
+                timeInCurrentState++;
+                
+                // First, release all keys to clear previous state
+                releaseAllKeys();
+                
+                // Then apply the current movement based on state
+                switch (currentMovementState) {
+                    case "forward":
+                        simulateKeyEvent(KEY_W, 'keydown');
+                        // Apply shift key most of the time when going forward
+                        if (Math.random() < 0.8) {
+                            simulateKeyEvent(KEY_SHIFT, 'keydown');
+                            isAccelerating = true;
+                            updateAccelerationUI(true);
+                            currentVelocity = acceleratedSpeed + (Math.random() * 3);
+                        } else {
+                            currentVelocity = normalSpeed + (Math.random() * 2);
+                        }
+                        addLogEntry("Auto-navigating forward");
+                        break;
+                    case "backward":
+                        simulateKeyEvent(KEY_S, 'keydown');
+                        addLogEntry("Auto-navigating backward");
+                        currentVelocity = normalSpeed * 0.7 + (Math.random() * 1);
+                        break;
+                    case "left":
+                        simulateKeyEvent(KEY_A, 'keydown');
+                        addLogEntry("Auto-turning left");
+                        currentVelocity = normalSpeed * 0.5 + (Math.random() * 1);
+                        break;
+                    case "right":
+                        simulateKeyEvent(KEY_D, 'keydown');
+                        addLogEntry("Auto-turning right");
+                        currentVelocity = normalSpeed * 0.5 + (Math.random() * 1);
+                        break;
+                    case "jump":
+                        simulateKeyEvent(KEY_SPACE, 'keydown');
+                        addLogEntry("Auto-jump initiated");
+                        currentVelocity = normalSpeed * 0.3;
+                        // Release jump key after a short delay
+                        setTimeout(() => {
+                            simulateKeyEvent(KEY_SPACE, 'keyup');
+                            currentMovementState = "forward";
+                            lastJumpTime = missionSeconds;
+                            currentVelocity = normalSpeed * 1.2 + (Math.random() * 3);
+                        }, 200);
+                        break;
+                    case "run":
+                        simulateKeyEvent(KEY_SHIFT, 'keydown');
+                        simulateKeyEvent(KEY_W, 'keydown');
+                        isAccelerating = true;
+                        updateAccelerationUI(true);
+                        addLogEntry("Auto-acceleration engaged");
+                        currentVelocity = acceleratedSpeed + (Math.random() * 3);
+                        break;
+                }
+                
+                // Update velocity display
+                document.getElementById('velocity-display').textContent = `${currentVelocity.toFixed(1)} m/s`;
+                document.getElementById('speedometer-value').textContent = `${currentVelocity.toFixed(1)} m/s`;
+                
+                // Update distance based on velocity
+                currentDistance += currentVelocity * 0.1;
+                document.getElementById('distance-display').textContent = `${currentDistance.toFixed(1)} m`;
+                
+                // Add bounciness to velocity
+                const bounceFactor = Math.random() > 0.7 ? Math.random() * 8 : 0;
+                currentVelocity += (Math.random() - 0.5) * 2.5 + bounceFactor;
+                if (currentVelocity < 0) currentVelocity = 0.5;  // Don't go negative
+                
+                // Add occasional vertical bounces
+                if (Math.random() > 0.8 && currentMovementState !== "jump") {
+                    simulateKeyEvent(KEY_SPACE, 'keydown');
+                    setTimeout(() => {
+                        simulateKeyEvent(KEY_SPACE, 'keyup');
+                    }, 150);
+                }
+                
+                // Maybe jump randomly (independent of current state)
+                const currentTime = missionSeconds;
+                if (currentTime - lastJumpTime > 3 && Math.random() < 0.2 && currentMovementState !== "jump") {
+                    releaseAllKeys(); // Clear current keys
+                    simulateKeyEvent(KEY_SPACE, 'keydown');
+                    addLogEntry("Autonomous jump executed");
+                    lastJumpTime = currentTime;
+                    
+                    setTimeout(() => {
+                        simulateKeyEvent(KEY_SPACE, 'keyup');
+                    }, 200);
+                }
+                
+                // Randomly accelerate (independent of movement direction)
+                if (Math.random() < 0.6 && !isAccelerating && 
+                   (currentMovementState === "forward" || currentMovementState === "backward")) {
+                    simulateKeyEvent(KEY_SHIFT, 'keydown');
+                    isAccelerating = true;
+                    updateAccelerationUI(true);
+                    addLogEntry("Auto-boost activated");
+                    currentVelocity = acceleratedSpeed + (Math.random() * 3);
+                } else if (Math.random() < 0.05 && isAccelerating) {
+                    simulateKeyEvent(KEY_SHIFT, 'keyup');
+                    isAccelerating = false;
+                    updateAccelerationUI(false);
+                    addLogEntry("Auto-boost deactivated");
+                    currentVelocity = normalSpeed + (Math.random() * 2);
+                }
+                
+                // Update compass based on movement
+                if (Math.random() > 0.8) {
+                    const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+                    const compassDisplay = document.getElementById('compass-direction');
+                    let currentIndex = directions.indexOf(compassDisplay.textContent);
+                    if (currentIndex === -1) currentIndex = 0;
+                    
+                    // Determine direction change based on movement
+                    let change = 0;
+                    if (currentMovementState === "left") {
+                        change = -1;
+                    } else if (currentMovementState === "right") {
+                        change = 1;
+                    } else {
+                        change = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+                    }
+                    
+                    // Update compass
+                    const newIndex = (currentIndex + change + 8) % 8;
+                    compassDisplay.textContent = directions[newIndex];
+                }
+                
+                // Change movement state periodically
+                if (timeInCurrentState > 3 || (currentMovementState === "left" || currentMovementState === "right" || currentMovementState === "jump") && timeInCurrentState > 1) {
+                    currentMovementState = chooseRandomMovement();
+                    timeInCurrentState = 0;
+                }
+            }
+            
+            // Start the auto movement loop
+            autoMovementInterval = setInterval(applyMovementState, 800);
+        }
         
         // Update acceleration UI
         function updateAccelerationUI(isAccelerating) {
             const accelerationIndicator = document.getElementById('acceleration-indicator');
             
             if (isAccelerating) {
-                accelerationIndicator.textContent = "RUNNING";
+                accelerationIndicator.textContent = "BOOSTED";
                 accelerationIndicator.style.color = "#ff0000";
             } else {
-                accelerationIndicator.textContent = "NORMAL";
+                accelerationIndicator.textContent = "AUTO";
                 accelerationIndicator.style.color = "#ffae00";
             }
         }
@@ -603,37 +833,11 @@
                 const seconds = (missionSeconds % 60).toString().padStart(2, '0');
                 timeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
                 
-                // If we don't have data from Unity yet, use simulated values
-                if (!window.unityDataReceived) {
-                    // Simulate running state occasionally
-                    if (Math.random() > 0.97) {
-                        isAccelerating = !isAccelerating;
-                        updateAccelerationUI(isAccelerating);
-                    }
-                    
-                    // Simulate velocity changes based on acceleration status
-                    const targetSpeed = isAccelerating ? acceleratedSpeed : normalSpeed;
-                    
-                    // Gradually adjust speed towards the target
-                    if (Math.abs(currentVelocity - targetSpeed) > 0.1) {
-                        currentVelocity += (targetSpeed - currentVelocity) * 0.1;
-                    }
-                    
-                    // Add small random variations
-                    currentVelocity += (Math.random() - 0.5) * 0.2;
-                    
-                    // Update distance based on velocity
-                    currentDistance += currentVelocity * 0.1;
-                    
-                    // Update displays with simulated values
-                    velocityDisplay.textContent = `${currentVelocity.toFixed(1)} m/s`;
-                    speedometerValue.textContent = `${currentVelocity.toFixed(1)} m/s`;
-                    distanceDisplay.textContent = `${currentDistance.toFixed(1)} m`;
-                    
-                    // Random fluctuations for temperature
-                    const tempValue = -60 + (Math.random() * 5);
-                    temperatureDisplay.textContent = `${tempValue.toFixed(1)}°C`;
-                }
+                // Random fluctuations for temperature
+                const tempValue = -60 + (Math.random() * 5);
+                temperatureDisplay.textContent = `${tempValue.toFixed(1)}°C`;
+                
+                // Let the auto movement system handle velocity and distance updates
             }, 100);
         }
         
@@ -665,7 +869,7 @@
             const compassDisplay = document.getElementById('compass-direction');
             
             setInterval(() => {
-                if (Math.random() > 0.9) {
+                if (Math.random() > 0.7) { // More frequent direction changes for auto mode
                     // Randomly change direction occasionally
                     currentDirection = (currentDirection + Math.floor(Math.random() * 3) - 1 + 8) % 8;
                     compassDisplay.textContent = directions[currentDirection];
