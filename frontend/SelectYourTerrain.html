@@ -9,11 +9,11 @@
             margin: 0;
             padding: 0;
             font-family: 'Montserrat', sans-serif;
-            background: black; /* Base black background */
+            background: black; 
             position: relative;
         }
 
-        /* Background image with transparency */
+       
         .background {
             position: fixed;
             top: 0;
@@ -21,7 +21,7 @@
             width: 100%;
             height: 100%;
             background: url('Images/Background.png') no-repeat center center/cover;
-            opacity: 0.6; /*background duller */
+            opacity: 0.6; 
             z-index: -1; 
         }
 
@@ -54,6 +54,7 @@
             text-align: center;
             cursor: pointer;
             transition: transform 0.3s ease-in-out;
+            position: relative;
         }
 
         .terrain img {
@@ -74,7 +75,54 @@
             text-transform: uppercase;
         }
 
-        /* Logo in bottom left */
+
+        .terrain.disabled {
+            position: relative;
+        }
+
+        .terrain-image-wrapper {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .terrain-image-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); 
+            border-radius: 15px;
+            pointer-events: none;
+        }
+
+        .terrain.disabled img {
+            width: 100%;
+            height: auto;
+            display: block;
+            opacity: 1;
+            pointer-events: none;
+        }
+
+
+        .launching-soon {
+            
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px #ff914d;
+            animation: pulseGlow 2s infinite;
+            pointer-events: none;
+        }
+        /* testing */
+        
         .logo {
             position: fixed;
             width: 200px;
@@ -82,7 +130,7 @@
             left: 20px;
         }
 
-        /* Home button in bottom right */
+
         .home-button {
             position: fixed;
             width: 80px;
@@ -95,6 +143,13 @@
             transform: rotate(360deg) scale(0);
             transition: transform 0.5s ease-in-out;
         }
+
+        @keyframes pulseGlow {
+            0% { text-shadow: 0 0 8px #fdddb1;; }
+            50% { text-shadow: 0 0 20px #ff914d; }
+            100% { text-shadow: 0 0 8px #fdddb1;; }
+        }
+
 
     </style>
 </head>
@@ -109,12 +164,18 @@
                 <img src="Images/original.png" alt="Original Terrain">
                 <div class="terrain-name">Original "Solis"</div>
             </div>
-            <div class="terrain" onclick="selectTerrain('Mont Royal')">
-                <img src="Images/montRoyal.png" alt="Mont Royal Terrain">
+            <div class="terrain disabled">
+                <div class="terrain-image-wrapper">
+                    <img src="Images/montRoyal.png" alt="Mont Royal Terrain">
+                </div>
+                <div class="launching-soon">Launching Soon</div>
                 <div class="terrain-name">Mont Royal</div>
             </div>
-            <div class="terrain" onclick="selectTerrain('Rift Valley')">
-                <img src="Images/riftvalley.png" alt="Rift Valley Terrain">
+            <div class="terrain disabled">
+                <div class="terrain-image-wrapper">
+                    <img src="Images/riftvalley.png" alt="Rift Valley Terrain">
+                </div>
+                <div class="launching-soon">Launching Soon</div>
                 <div class="terrain-name">Rift Valley</div>
             </div>
         </div>
