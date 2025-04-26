@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Mars Rover Simulator - Yellow Classic</title>
+    <link rel="shortcut icon" href="marsterrain/TemplateData/favicon.ico">
+    <link rel="stylesheet" href="marsterrain/TemplateData/style.css">
+    <style>
+        :root {
+            --primary-color: #ffae00;
+            --secondary-color: #805600;
+            --panel-color: #2a2a2a;
+            --text-color: #e0e0e0;
+            --alert-color: #ffae00;
+            --success-color: #00bb00;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', monospace;
+            background-color: #000;
+            color: var(--text-color);
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #loading-bar-container {
+            width: 50%;
+            height: 30px;
+            background-color: #222;
+            border-radius: 15px;
+            margin-top: 20px;
+            overflow: hidden;
+            border: 2px solid var(--primary-color);
+        }
+
+        #loading-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary-color);
+            transition: width 0.3s;
+        }
+
+        #simulator-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        #unity-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        #unity-canvas {
+            width: 100%;
+            height: 100%;
+            background: #000;
+        }
+
+        #cockpit-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAwIDEwMDAiPjxwYXRoIGQ9Ik0wLDAgTDEwMCwwIEwxNTAsMTAwIEwxMDAsMTUwIEwwLDEwMCBaIiBmaWxsPSJyZ2JhKDI1NSwgMTc0LCAwLCAwLjUpIiBzdHJva2U9InJnYmEoMjU1LCAxNzQsIDAsIDAuOCkiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Ik0xMDAwLDAgTDkwMCwwIEw4NTAsMTAwIEw5MDAsMTUwIEwxMDAwLDEwMCBaIE0wLDEwMDAgTDAsOTAwIEwxMDAsODUwIEwxNTAsOTAwIEwxMDAsxMDAwIFogTTEwMDAsMTAwMCBMMTAwMCw5MDAgTDkwMCw4NTAgTDg1MCw5MDAgTDkwMCwxMDAwIHoiIGZpbGw9InJnYmEoMjU1LCAxNzQsIDAsIDAuNSkiIHN0cm9rZT0icmdiYSgyNTUsIDE3NCwgMCwgMC44KSIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9zdmc+');
+        }
+
+        #dashboard {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background-color: rgba(25, 25, 25, 0.8);
+            border-top: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 200;
+        }
+
+        .dashboard-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 150px;
+            height: 80%;
+        }
+
+        .dashboard-item {
+            margin: 5px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dashboard-label {
+            font-size: 12px;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .dashboard-value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .digital-display {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary-color);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: 'Digital', 'Courier New', monospace;
+            color: var(--primary-color);
+            width: 80px;
+            text-align: center;
+        }
+
+        #mission-logs {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 300px;
+            height: 200px;
+            background-color: rgba(25, 25, 25, 0.7);
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 12px;
+            z-index: 200;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255, 174, 0, 0.3);
+        }
+
+        .log-timestamp {
+            color: var(--primary-color);
+            margin-right: 5px;
+        }
+
+        #controls-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 250px;
+            background-color: rgba(25, 25, 25, 0.7);
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            padding: 10px;
+            z-index: 200;
+        }
+
+        .control-section {
+            margin-bottom: 15px;
+        }
+
+        .control-title {
+            color: var(--primary-color);
+            font-size: 14px;
+            margin-bottom: 5px;
+            border-bottom: 1px solid rgba(255, 174, 0, 0.5);
+            padding-bottom: 3px;
+        }
+
+        .control-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 12px;
+        }
+
+        .key-indicator {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--text-color);
+            padding: 2px 5px;
+            border-radius: 3px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        #compass {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 40px;
+            background-color: rgba(25, 25, 25, 0.7);
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        #compass-direction {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Cross-hair in the center */
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        #crosshair::before,
+        #crosshair::after {
+            content: '';
+            position: absolute;
+            background-color: rgba(255, 174, 0, 0.7);
+        }
+
+        #crosshair::before {
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #crosshair::after {
+            width: 100%;
+            height: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        #crosshair-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 174, 0, 0.7);
+            border-radius: 50%;
+        }
+
+        @keyframes scan-line {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        #scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: rgba(255, 174, 0, 0.3);
+            box-shadow: 0 0 10px rgba(255, 174, 0, 0.5);
+            animation: scan-line 10s linear infinite;
+            pointer-events: none;
+            z-index: 90;
+        }
+
+        /* Speedometer */
+        #speedometer {
+            position: absolute;
+            bottom: 170px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            background-color: rgba(25, 25, 25, 0.7);
+            border: 1px solid var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            padding: 10px;
+        }
+
+        #speedometer-label {
+            font-size: 12px;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        #speedometer-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        #acceleration-indicator {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #ffae00;
+        }
+
+        /* Hide Unity default loading and add our custom one */
+        #unity-loading-bar {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-screen">
+        <h1>MARS ROVER SIMULATOR - YELLOW CLASSIC</h1>
+        <p>INITIALIZING SYSTEMS...</p>
+        <div id="loading-bar-container">
+            <div id="loading-bar"></div>
+        </div>
+        <p id="loading-text">Loading: 0%</p>
+    </div>
+
+    <div id="unity-container" class="unity-desktop">
+        <canvas id="unity-canvas" width=1920 height=1080 tabindex="-1"></canvas>
+        <div id="unity-loading-bar">
+            <div id="unity-logo"></div>
+            <div id="unity-progress-bar-empty">
+                <div id="unity-progress-bar-full"></div>
+            </div>
+        </div>
+        <div id="unity-warning"></div>
+        <div id="unity-footer">
+            <div id="unity-fullscreen-button"></div>
+            <div id="unity-build-title">marsSimulation - Yellow Classic</div>
+        </div>
+        
+        <!-- Custom simulator UI elements -->
+        <div id="cockpit-overlay"></div>
+        <div id="scan-line"></div>
+        
+        <div id="crosshair">
+            <div id="crosshair-circle"></div>
+        </div>
+
+        <div id="mission-logs">
+            <div class="log-entry">
+                <span class="log-timestamp">T+00:00:00</span>
+                <span class="log-message">Yellow Classic mission initiated. Systems online.</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">T+00:00:30</span>
+                <span class="log-message">Rover deployed successfully.</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">T+00:01:15</span>
+                <span class="log-message">Beginning terrain scan sequence.</span>
+            </div>
+        </div>
+
+        <div id="controls-overlay">
+            <div class="control-section">
+                <div class="control-title">MOVEMENT CONTROLS</div>
+                <div class="control-item">
+                    <span>Forward</span>
+                    <span class="key-indicator">W</span>
+                </div>
+                <div class="control-item">
+                    <span>Backward</span>
+                    <span class="key-indicator">S</span>
+                </div>
+                <div class="control-item">
+                    <span>Turn Left</span>
+                    <span class="key-indicator">A</span>
+                </div>
+                <div class="control-item">
+                    <span>Turn Right</span>
+                    <span class="key-indicator">D</span>
+                </div>
+                <div class="control-item">
+                    <span>Jump</span>
+                    <span class="key-indicator">SPACE</span>
+                </div>
+                <div class="control-item">
+                    <span>Run</span>
+                    <span class="key-indicator">SHIFT</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="compass">
+            <div id="compass-direction">N</div>
+        </div>
+
+        <!-- Speedometer -->
+        <div id="speedometer">
+            <div id="speedometer-label">SPEED</div>
+            <div id="speedometer-value">0.0 m/s</div>
+            <div id="acceleration-indicator">NORMAL</div>
+        </div>
+
+        <div id="dashboard">
+            <div class="dashboard-section">
+                <div class="dashboard-item">
+                    <div class="dashboard-label">VELOCITY</div>
+                    <div class="digital-display" id="velocity-display">0.0 m/s</div>
+                </div>
+                <div class="dashboard-item">
+                    <div class="dashboard-label">DISTANCE</div>
+                    <div class="digital-display" id="distance-display">0.0 m</div>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <div class="dashboard-item">
+                    <div class="dashboard-label">TEMPERATURE</div>
+                    <div class="digital-display" id="temperature-display">-60.2°C</div>
+                </div>
+                <div class="dashboard-item">
+                    <div class="dashboard-label">SYSTEM TIME</div>
+                    <div class="digital-display" id="time-display">00:00:00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize variables
+        let unityInstance = null;
+        let missionSeconds = 0;
+        let currentVelocity = 0;
+        let currentDistance = 0;
+        let isAccelerating = false;
+        let normalSpeed = 5;
+        let acceleratedSpeed = 10;
+        
+        // Start loading sequence
+        document.addEventListener('DOMContentLoaded', function() {
+            startLoadingSequence();
+        });
+        
+        // Simulate loading progress and then load Unity
+        function startLoadingSequence() {
+            let progress = 0;
+            const loadingBar = document.getElementById('loading-bar');
+            const loadingText = document.getElementById('loading-text');
+            const loadingScreen = document.getElementById('loading-screen');
+            
+            const loadingInterval = setInterval(() => {
+                progress += Math.random() * 5;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(loadingInterval);
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                        initUnity();
+                    }, 1000);
+                }
+                loadingBar.style.width = `${progress}%`;
+                loadingText.innerText = `Loading: ${Math.floor(progress)}%`;
+            }, 200);
+        }
+        
+        var canvas = document.querySelector("#unity-canvas");
+
+        // Shows a temporary message banner/ribbon for a few seconds, or
+        // a permanent error message on top of the canvas if type=='error'.
+        function unityShowBanner(msg, type) {
+            var warningBanner = document.querySelector("#unity-warning");
+            function updateBannerVisibility() {
+                warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+            }
+            var div = document.createElement('div');
+            div.innerHTML = msg;
+            warningBanner.appendChild(div);
+            if (type == 'error') div.style = 'background: red; padding: 10px;';
+            else {
+                if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+                setTimeout(function() {
+                    warningBanner.removeChild(div);
+                    updateBannerVisibility();
+                }, 5000);
+            }
+            updateBannerVisibility();
+        }
+
+        var buildUrl = "marsterrain/Build";
+        var loaderUrl = buildUrl + "/mars terrain web build.loader.js";
+        var config = {
+            dataUrl: buildUrl + "/mars terrain web build.data",
+            frameworkUrl: buildUrl + "/mars terrain web build.framework.js",
+            codeUrl: buildUrl + "/mars terrain web build.wasm",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "DefaultCompany",
+            productName: "marsSimulation",
+            productVersion: "0.1.0",
+            showBanner: unityShowBanner,
+        };
+
+        function initUnity() {
+            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                // Mobile device style
+                var meta = document.createElement('meta');
+                meta.name = 'viewport';
+                meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+                document.getElementsByTagName('head')[0].appendChild(meta);
+                document.querySelector("#unity-container").className = "unity-mobile";
+                canvas.className = "unity-mobile";
+            } else {
+                // Desktop style
+                canvas.style.width = "100%";
+                canvas.style.height = "100%";
+            }
+
+            var script = document.createElement("script");
+            script.src = loaderUrl;
+            script.onload = () => {
+                createUnityInstance(canvas, config, (progress) => {
+                    console.log(`Unity loading progress: ${progress * 100}%`);
+                }).then((instance) => {
+                    unityInstance = instance;
+                    console.log("Unity runtime initialized");
+                    
+                    // Start simulator systems
+                    updateDashboard();
+                    startCompassUpdates();
+                    
+                    // Add initial log entries
+                    addLogEntry("Yellow Classic simulation initialized successfully");
+                    addLogEntry("Rover systems online");
+                    
+                    // Schedule some additional logs for immersion
+                    setTimeout(() => addLogEntry("Terrain mapping in progress..."), 3000);
+                    setTimeout(() => addLogEntry("Jump capability activated..."), 5000);
+                    setTimeout(() => addLogEntry("Acceleration system online..."), 7000);
+                    
+                    document.querySelector("#unity-fullscreen-button").onclick = () => {
+                        unityInstance.SetFullscreen(1);
+                    };
+                }).catch((message) => {
+                    console.error("Unity initialization error:", message);
+                    addLogEntry("ERROR: System initialization failed");
+                });
+            };
+            
+            document.body.appendChild(script);
+        }
+        
+        // Update acceleration UI
+        function updateAccelerationUI(isAccelerating) {
+            const accelerationIndicator = document.getElementById('acceleration-indicator');
+            
+            if (isAccelerating) {
+                accelerationIndicator.textContent = "RUNNING";
+                accelerationIndicator.style.color = "#ff0000";
+            } else {
+                accelerationIndicator.textContent = "NORMAL";
+                accelerationIndicator.style.color = "#ffae00";
+            }
+        }
+        
+        // Update dashboard values
+        function updateDashboard() {
+            // Get dashboard display elements
+            const velocityDisplay = document.getElementById('velocity-display');
+            const distanceDisplay = document.getElementById('distance-display');
+            const temperatureDisplay = document.getElementById('temperature-display');
+            const timeDisplay = document.getElementById('time-display');
+            const speedometerValue = document.getElementById('speedometer-value');
+            
+            setInterval(() => {
+                // Update mission time
+                missionSeconds++;
+                const hours = Math.floor(missionSeconds / 3600).toString().padStart(2, '0');
+                const minutes = Math.floor((missionSeconds % 3600) / 60).toString().padStart(2, '0');
+                const seconds = (missionSeconds % 60).toString().padStart(2, '0');
+                timeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+                
+                // If we don't have data from Unity yet, use simulated values
+                if (!window.unityDataReceived) {
+                    // Simulate running state occasionally
+                    if (Math.random() > 0.97) {
+                        isAccelerating = !isAccelerating;
+                        updateAccelerationUI(isAccelerating);
+                    }
+                    
+                    // Simulate velocity changes based on acceleration status
+                    const targetSpeed = isAccelerating ? acceleratedSpeed : normalSpeed;
+                    
+                    // Gradually adjust speed towards the target
+                    if (Math.abs(currentVelocity - targetSpeed) > 0.1) {
+                        currentVelocity += (targetSpeed - currentVelocity) * 0.1;
+                    }
+                    
+                    // Add small random variations
+                    currentVelocity += (Math.random() - 0.5) * 0.2;
+                    
+                    // Update distance based on velocity
+                    currentDistance += currentVelocity * 0.1;
+                    
+                    // Update displays with simulated values
+                    velocityDisplay.textContent = `${currentVelocity.toFixed(1)} m/s`;
+                    speedometerValue.textContent = `${currentVelocity.toFixed(1)} m/s`;
+                    distanceDisplay.textContent = `${currentDistance.toFixed(1)} m`;
+                    
+                    // Random fluctuations for temperature
+                    const tempValue = -60 + (Math.random() * 5);
+                    temperatureDisplay.textContent = `${tempValue.toFixed(1)}°C`;
+                }
+            }, 100);
+        }
+        
+        // Add log entry to mission logs
+        function addLogEntry(message) {
+            const logs = document.getElementById('mission-logs');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            
+            // Format mission time
+            const hours = Math.floor(missionSeconds / 3600).toString().padStart(2, '0');
+            const minutes = Math.floor((missionSeconds % 3600) / 60).toString().padStart(2, '0');
+            const seconds = (missionSeconds % 60).toString().padStart(2, '0');
+            const timeString = `T+${hours}:${minutes}:${seconds}`;
+            
+            entry.innerHTML = `
+                <span class="log-timestamp">${timeString}</span>
+                <span class="log-message">${message}</span>
+            `;
+            
+            logs.appendChild(entry);
+            logs.scrollTop = logs.scrollHeight;
+        }
+        
+        // Update compass direction
+        function startCompassUpdates() {
+            const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+            let currentDirection = 0;
+            const compassDisplay = document.getElementById('compass-direction');
+            
+            setInterval(() => {
+                if (Math.random() > 0.9) {
+                    // Randomly change direction occasionally
+                    currentDirection = (currentDirection + Math.floor(Math.random() * 3) - 1 + 8) % 8;
+                    compassDisplay.textContent = directions[currentDirection];
+                }
+            }, 500);
+        }
+        
+        // Receive data from Unity
+        function receiveDataFromUnity(data) {
+            window.unityDataReceived = true;
+            console.log("Received from Unity:", data);
+            
+            // Parse the data (assuming JSON format)
+            try {
+                const parsedData = JSON.parse(data);
+                
+                // Update dashboard based on data from Unity
+                if (parsedData.velocity !== undefined) {
+                    currentVelocity = parsedData.velocity;
+                    document.getElementById('velocity-display').textContent = `${currentVelocity.toFixed(1)} m/s`;
+                    document.getElementById('speedometer-value').textContent = `${currentVelocity.toFixed(1)} m/s`;
+                }
+                
+                if (parsedData.distance !== undefined) {
+                    currentDistance = parsedData.distance;
+                    document.getElementById('distance-display').textContent = `${currentDistance.toFixed(1)} m`;
+                }
+                
+                // Update acceleration status if provided
+                if (parsedData.isAccelerating !== undefined) {
+                    isAccelerating = parsedData.isAccelerating;
+                    updateAccelerationUI(isAccelerating);
+                }
+                
+                // Update compass if rotation data is available
+                if (parsedData.rotation !== undefined) {
+                    updateCompassFromRotation(parsedData.rotation);
+                }
+                
+                // Handle specific data types
+                if (parsedData.temperature !== undefined) {
+                    document.getElementById('temperature-display').textContent = `${parsedData.temperature.toFixed(1)}°C`;
+                }
+                
+                // Add log entries if included
+                if (parsedData.log) {
+                    addLogEntry(parsedData.log);
+                }
+            } catch (e) {
+                console.error("Error parsing data from Unity:", e);
+            }
+        }
+        
+        // Update compass based on rotation from Unity
+        function updateCompassFromRotation(rotation) {
+            // Normalize rotation to 0-360
+            rotation = ((rotation % 360) + 360) % 360;
+            
+            // Map degrees to compass directions
+            const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+            const index = Math.round(rotation / 45) % 8;
+            
+            document.getElementById('compass-direction').textContent = directions[index];
+        }
+    </script>
+</body>
+</html> 
