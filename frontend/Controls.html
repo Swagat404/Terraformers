@@ -100,10 +100,8 @@
             bottom: 40px;
             right: 20px;
             cursor: pointer;
-            display: block;
-            pointer-events: all;
         }
-
+        
         .home-button:active {
             transform: rotate(360deg) scale(0);
             transition: transform 0.5s ease-in-out;
@@ -141,9 +139,12 @@
         </div>
     </div>
 
+   
+
     <!-- Fixed Logo & Home Button -->
     <img src="Images/logoclean.png" alt="Terraformers Logo" class="logo">
     <img src="Images/home.png" alt="Home Button" class="home-button" onclick="goHome()">
+
 
     <script>
         function goHome() {
