@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Controls</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: black;
+            position: relative;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('Images/Background.png') no-repeat center center/cover;
+            opacity: 0.6;
+            z-index: -1;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            padding-top: 30px;
+        }
+
+        .title {
+            font-size: 70px;
+            color: white;
+            text-shadow: 4px 4px 10px #ff914d;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 60px;
+            margin-top: 20px;
+        }
+
+        .content-columns {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 80px;
+            margin-bottom: 80px;
+        }
+
+        .controls-section, .avatar-section {
+            flex: 1;
+            max-width: 500px;
+        }
+
+        .control-item {
+            margin-bottom: 60px;
+        }
+
+        .control-item img {
+            width: 350px;
+            filter: drop-shadow(0 0 10px #ff914d);
+        }
+
+        .control-description {
+            margin-top: 20px;
+            font-size: 32px;
+            color: white;
+            text-shadow: 2px 2px 8px #ff914d;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 40px;
+            color: white;
+            text-shadow: 2px 2px 8px #ff914d;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .text {
+            font-size: 25px;
+            color: white;
+            text-shadow: 1px 1px 5px #ff914d;
+            line-height: 1.6;
+        }
+
+        .logo {
+            position: fixed;
+            width: 200px;
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .home-button {
+            position: fixed;
+            width: 80px;
+            bottom: 40px;
+            right: 20px;
+            cursor: pointer;
+            display: block;
+            pointer-events: all;
+        }
+
+        .home-button:active {
+            transform: rotate(360deg) scale(0);
+            transition: transform 0.5s ease-in-out;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="background"></div>
+
+    <div class="container">
+        <div class="title">Mission Controls</div>
+
+        <div class="content-columns">
+            <div class="controls-section">
+                <div class="control-item">
+                    <img src="Images/spacebar.png" alt="Space Bar">
+                    <div class="control-description">TO JUMP</div>
+                </div>
+                <div class="control-item">
+                    <img src="Images/arrowkeys.png" alt="Arrow Keys">
+                    <div class="control-description">TO MOVE IN ALL DIRECTIONS</div>
+                </div>
+            </div>
+
+            <div class="avatar-section">
+                <div class="subtitle">Avatar Modes</div>
+                <div class="text">
+                    <strong>Basic Auto Mode:</strong> Your avatar moves automatically using AI. No player input needed.<br><br>
+                    <strong>Manual Mode:</strong> You fully control the avatar using the arrow keys and space bar.<br><br>
+                    <strong>Fast & Bouncy Mode:</strong> A hybrid mode where your avatar moves automatically but can also be guided manually.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fixed Logo & Home Button -->
+    <img src="Images/logoclean.png" alt="Terraformers Logo" class="logo">
+    <img src="Images/home.png" alt="Home Button" class="home-button" onclick="goHome()">
+
+    <script>
+        function goHome() {
+            window.location.href = "Landingpage.html";
+        }
+    </script>
+
+</body>
+</html>
