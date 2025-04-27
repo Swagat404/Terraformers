@@ -1,6 +1,6 @@
 # Terraformers - Mars AI Simulator
 
-![Mars AI Simulator Banner](./assets/images/logo.png)
+![Mars AI Simulator Banner](./assets/images/logoImproved.png)
 
 ## Table of Contents
 - [Overview](#overview)
